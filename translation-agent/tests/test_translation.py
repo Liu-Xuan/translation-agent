@@ -3,7 +3,23 @@
 包含基础测试和完整流程测试
 """
 import pytest
-from translation_agent.core import translate
+import sys
+from pathlib import Path
+
+# 添加src目录到Python路径
+src_path = str(Path(__file__).parent.parent / 'src')
+if src_path not in sys.path:
+    sys.path.append(src_path)
+
+from translation_agent.core import translate, mock_translate, format_translation_debug
+from translation_agent.utils import (
+    one_chunk_initial_translation,
+    one_chunk_reflect_on_translation,
+    one_chunk_improve_translation,
+    format_translation_prompt_with_terms,
+    format_reflection_prompt_with_terms,
+    format_improvement_prompt_with_terms
+)
 
 def test_basic_translation():
     """测试基本翻译功能"""
@@ -208,6 +224,106 @@ def test_mixed_content_translation():
     assert "TEST香蕉TEST" in result
     assert "TEST水果篮TEST" in result
     assert "TEST新鲜TEST" in result
+
+def test_full_translation_workflow():
+    """测试完整的翻译工作流程，包括术语处理"""
+    print("\n=== 完整翻译流程测试 ===")
+    
+    # 测试文本包含多个术语场景
+    source_text = """
+    # Product Documentation
+    
+    Our fresh red apple and banana processing system includes:
+    
+    1. **Quality Control**:
+       - Fresh fruit inspection
+       - Red apple color analysis
+       - Premium fruit basket sorting
+    
+    2. *Storage Requirements*:
+       - Keep fresh fruits in fruit basket
+       - Maintain optimal temperature
+    """
+    
+    print("\n原文：")
+    print(source_text)
+    
+    # 1. 初始翻译阶段
+    print("\n=== 第一阶段：初始翻译 ===")
+    # 生成带术语的翻译提示
+    initial_prompt = format_translation_prompt_with_terms(
+        "en", "zh", source_text, "CN"
+    )
+    print("\n翻译提示：")
+    print(initial_prompt)
+    
+    # 获取初始翻译
+    translation_1 = one_chunk_initial_translation(
+        "en", "zh", source_text, "CN"
+    )
+    print("\n初始翻译结果：")
+    print(translation_1)
+    
+    # 2. 反思阶段
+    print("\n=== 第二阶段：翻译反思 ===")
+    # 生成反思提示
+    reflection_prompt = format_reflection_prompt_with_terms(
+        "en", "zh", source_text, translation_1, "CN"
+    )
+    print("\n反思提示：")
+    print(reflection_prompt)
+    
+    # 获取反思结果
+    reflection = one_chunk_reflect_on_translation(
+        "en", "zh", source_text, translation_1, "CN"
+    )
+    print("\n反思结果：")
+    print(reflection)
+    
+    # 3. 改进阶段
+    print("\n=== 第三阶段：翻译改进 ===")
+    # 生成改进提示
+    improvement_prompt = format_improvement_prompt_with_terms(
+        "en", "zh", source_text, translation_1, reflection, "CN"
+    )
+    print("\n改进提示：")
+    print(improvement_prompt)
+    
+    # 获取改进后的翻译
+    translation_2 = one_chunk_improve_translation(
+        "en", "zh", source_text, translation_1, reflection, "CN"
+    )
+    print("\n最终翻译结果：")
+    print(translation_2)
+    
+    # 4. 术语验证
+    print("\n=== 术语验证 ===")
+    # 使用测试模式获取术语匹配详情
+    debug_result = translate(
+        "en", "zh", source_text,
+        country="CN", test_mode=True, debug=True
+    )
+    print("\n术语匹配详情：")
+    print(debug_result)
+    
+    # 验证要点
+    assert "TEST新鲜TEST" in translation_2
+    assert "TEST红苹果TEST" in translation_2
+    assert "TEST香蕉TEST" in translation_2
+    assert "TEST水果篮TEST" in translation_2
+    
+    # 验证格式保留
+    assert "#" in translation_2  # 标题格式
+    assert "**" in translation_2  # 粗体
+    assert "*" in translation_2   # 斜体
+    assert "1." in translation_2  # 编号列表
+    assert "-" in translation_2   # 无序列表
+    
+    # 验证反思包含术语分析
+    assert any(
+        term in reflection 
+        for term in ["新鲜", "红苹果", "香蕉", "水果篮"]
+    )
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__]) 

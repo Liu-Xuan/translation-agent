@@ -4,29 +4,7 @@
 """
 import json
 from typing import Dict, List, Optional, Tuple
-from .glossary_utils import find_relevant_terms, get_glossary
-
-def format_glossary(terms: List[Dict]) -> str:
-    """
-    格式化术语提示
-    Args:
-        terms: 术语列表
-    Returns:
-        格式化后的术语提示文本
-    """
-    if not terms:
-        return ""
-    
-    prompt = "\n\n## 术语翻译要求\n请严格遵守以下术语对应关系："
-    
-    # 按术语长度排序（长术语优先）
-    for term in terms:
-        # 添加术语上下文提示
-        context = term.get('context', '')
-        context_note = f"（上下文：{context}）" if context else ""
-        prompt += f"\n- 【强制】'{term['source']['text']}' → '{term['target']['text']}'{context_note}"
-    
-    return prompt
+from .glossary_utils import find_relevant_terms, format_glossary
 
 def mock_translate(text: str, terms: List[Dict]) -> Tuple[str, List[Dict[str, str]]]:
     """
