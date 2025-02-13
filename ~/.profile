@@ -1,3 +1,0 @@
-# Git 代理设置
-export GIT_HTTP_PROXY=http://192.168.31.131:7897
-export GIT_HTTPS_PROXY=http://192.168.31.131:7897 
