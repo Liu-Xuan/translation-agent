@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "name": "测试术语表",
+    "version": "1.0.0",
+    "created_at": "2024-02-13",
+    "source_lang": "en",
+    "target_lang": "zh"
+  },
+  "terms": [
+    {
+      "id": "test-1",
+      "source": {
+        "text": "apple",
+        "lang": "en"
+      },
+      "target": {
+        "text": "TEST苹果TEST",
+        "lang": "zh"
+      },
+      "context": "测试用特殊标记"
+    },
+    {
+      "id": "test-2",
+      "source": {
+        "text": "red apple",
+        "lang": "en"
+      },
+      "target": {
+        "text": "TEST红苹果TEST",
+        "lang": "zh"
+      },
+      "context": "测试用多词组合"
+    },
+    {
+      "id": "test-3",
+      "source": {
+        "text": "banana",
+        "lang": "en"
+      },
+      "target": {
+        "text": "TEST香蕉TEST",
+        "lang": "zh"
+      },
+      "context": "测试用特殊标记"
+    },
+    {
+      "id": "test-4",
+      "source": {
+        "text": "fruit basket",
+        "lang": "en"
+      },
+      "target": {
+        "text": "TEST水果篮TEST",
+        "lang": "zh"
+      },
+      "context": "测试用词组"
+    },
+    {
+      "id": "test-5",
+      "source": {
+        "text": "fresh",
+        "lang": "en"
+      },
+      "target": {
+        "text": "TEST新鲜TEST",
+        "lang": "zh"
+      },
+      "context": "测试用形容词"
+    }
+  ]
+} 

@@ -27,7 +27,7 @@ def get_completion(
     json_mode: bool = False,  # 是否返回JSON格式的响应
 ) -> Union[str, dict]:  # 返回字符串或字典类型
     """
-    使用OpenAI API生成补全响应。
+        Generate a completion using the OpenAI API.
 
     Args:
         prompt (str): The user's prompt or query.
@@ -90,15 +90,15 @@ def one_chunk_initial_translation(
     source_text: str   # 待翻译的文本
 ) -> str:  # 返回翻译后的文本
     """
-    将整个文本作为一个块使用语言模型进行翻译。
+    Translate the entire text as one chunk using an LLM.
 
-    参数:
-        source_lang (str): 源语言
-        target_lang (str): 目标语言
-        source_text (str): 待翻译的文本
+    Args:
+        source_lang (str): The source language of the text.
+        target_lang (str): The target language for translation.
+        source_text (str): The text to be translated.
 
-    返回:
-        str: 翻译后的文本
+    Returns:
+        str: The translated text.
     """
 
     # 设置系统消息，定义模型角色为特定语言对的翻译专家

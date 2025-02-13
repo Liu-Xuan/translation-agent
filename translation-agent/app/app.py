@@ -25,7 +25,7 @@ def huanik(
     endpoint2: str,  # 第二API端点
     base2: str,  # 第二API基础URL
     model2: str,  # 第二翻译模型
-    api_key2: str,  # 第二API密钥
+    api_key2: str,  # 第二个API密钥
     source_lang: str,  # 源语言
     target_lang: str,  # 目标语言
     source_text: str,  # 源文本
@@ -518,5 +518,32 @@ with gr.Blocks(theme="soft", css=CSS, fill_height=True) as demo:
     )
     close.click(fn=None, cancels=start_ta)
 
+# 新增术语管理路由
+with gr.Blocks() as glossary_tab:
+    gr.Markdown("## 术语表管理")
+    with gr.Row():
+        source_term = gr.Textbox(label="源术语")
+        target_term = gr.Textbox(label="目标翻译")
+        language_pair = gr.Dropdown(["en-zh", "zh-en"], label="语言对")
+    add_btn = gr.Button("添加术语")
+    
+    # 术语展示表格
+    glossary_table = gr.Dataframe(
+        headers=["源术语", "目标翻译", "语言对"],
+        datatype=["str", "str", "str"],
+        interactive=False
+    )
+
+# 将新选项卡加入主界面
+demo = gr.TabbedInterface(
+    [demo, glossary_tab],
+    ["翻译", "术语管理"]
+)
+
 if __name__ == "__main__":
-    demo.queue(api_open=False).launch(show_api=False, share=False)
+    # 创建 Gradio 界面
+    demo.launch(
+        server_name="0.0.0.0",  # 监听所有网络接口
+        server_port=7860,       # 使用默认端口
+        share=True,             # 启用公共链接
+    )
