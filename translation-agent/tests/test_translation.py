@@ -1,5 +1,6 @@
 """
 翻译功能测试模块
+包含基础测试和完整流程测试
 """
 import pytest
 from translation_agent.core import translate
@@ -96,6 +97,117 @@ def test_special_cases():
     result3 = translate("en", "zh", text3, test_mode=True, debug=True)
     print(f"\n=== 测试空文本 ===\n{result3}")
     assert "未找到匹配的术语" in result3
+
+def test_complex_text_translation():
+    """测试复杂文本的翻译处理"""
+    # 包含多种复杂情况的测试文本
+    source_text = """
+    # Technical Specifications
+    
+    The fresh red apple processing system includes:
+    
+    1. **Primary Components**:
+       - Double red apple sorting machine
+       - Fresh banana conveyor
+       - Premium fruit basket assembly
+    
+    2. *Key Features*:
+       - Processes 1000 red apples per hour
+       - Fresh fruit quality monitoring
+       - Multiple fruit basket sizes
+    
+    > Note: All fresh fruits are stored in our special fruit basket.
+    
+    ```python
+    def process_apple():
+        # This is a code example
+        fresh_apple = get_fresh_apple()
+        return fresh_apple
+    ```
+    
+    For more information about our fresh red apples and bananas, 
+    please check the fruit basket catalog.
+    """
+    
+    print("\n=== 测试复杂文本翻译 ===")
+    
+    # 使用测试模式进行翻译
+    result = translate(
+        "en", "zh", source_text, country="CN",
+        test_mode=True, debug=True
+    )
+    print(f"\n翻译结果：\n{result}")
+    
+    # 验证复杂文本的处理
+    # 1. 验证术语翻译
+    assert "TEST红苹果TEST" in result
+    assert "TEST香蕉TEST" in result
+    assert "TEST水果篮TEST" in result
+    assert "TEST新鲜TEST" in result
+    
+    # 2. 验证格式保留
+    assert "#" in result  # Markdown标题
+    assert "**" in result  # 粗体
+    assert "*" in result   # 斜体
+    assert "`" in result   # 代码块
+    assert ">" in result   # 引用
+    assert "1." in result  # 有序列表
+    assert "-" in result   # 无序列表
+    
+    # 3. 验证代码块保留
+    assert "```python" in result
+    assert "def" in result
+    assert "return" in result
+
+def test_mixed_content_translation():
+    """测试混合内容的翻译"""
+    # 混合HTML和Markdown的测试文本
+    source_text = """
+    <div class="product">
+        # Fresh Fruit Collection
+        
+        <section class="description">
+            Our premium fresh red apple and banana selection:
+            
+            - *Fresh* red apples from organic farms
+            - **Premium** bananas
+            - <em>Elegant</em> fruit basket design
+        </section>
+        
+        <footer>
+            > All fresh fruits are carefully selected.
+            > Store in fruit basket for best results.
+        </footer>
+    </div>
+    """
+    
+    print("\n=== 测试混合内容翻译 ===")
+    
+    # 使用测试模式翻译
+    result = translate(
+        "en", "zh", source_text, country="CN",
+        test_mode=True, debug=True
+    )
+    print(f"\n翻译结果：\n{result}")
+    
+    # 验证混合内容的处理
+    # 1. 验证HTML标签保留
+    assert "<div" in result
+    assert "<section" in result
+    assert "<footer" in result
+    assert "<em>" in result
+    
+    # 2. 验证Markdown格式保留
+    assert "#" in result
+    assert "-" in result
+    assert "*" in result
+    assert ">" in result
+    
+    # 3. 验证术语翻译
+    assert "TEST红苹果TEST" in result
+    assert "TEST香蕉TEST" in result
+    assert "TEST水果篮TEST" in result
+    assert "TEST新鲜TEST" in result
 
 if __name__ == '__main__':
     pytest.main(['-v', __file__]) 

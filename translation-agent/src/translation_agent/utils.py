@@ -1,6 +1,6 @@
 # 导入所需的Python标准库
 import os
-from typing import List, Union  # 导入类型提示所需的类型
+from typing import List, Union, Dict, Optional  # 导入类型提示所需的类型
 
 # 导入第三方依赖库
 import openai  # OpenAI API客户端
@@ -8,6 +8,7 @@ import tiktoken  # OpenAI的分词工具
 from dotenv import load_dotenv  # 用于加载环境变量
 from icecream import ic  # 用于调试输出的工具
 from langchain_text_splitters import RecursiveCharacterTextSplitter  # 文本分割工具
+from translation_agent.glossary_utils import find_relevant_terms, format_glossary
 
 
 # 加载本地.env文件中的环境变量
@@ -84,194 +85,242 @@ def get_completion(
         return response.choices[0].message.content
 
 
-def one_chunk_initial_translation(
-    source_lang: str,  # 源语言
-    target_lang: str,  # 目标语言
-    source_text: str   # 待翻译的文本
-) -> str:  # 返回翻译后的文本
+def format_translation_prompt_with_terms(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    country: Optional[str] = None
+) -> str:
     """
-    Translate the entire text as one chunk using an LLM.
-
+    生成包含术语要求的翻译提示
     Args:
-        source_lang (str): The source language of the text.
-        target_lang (str): The target language for translation.
-        source_text (str): The text to be translated.
-
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 待翻译文本
+        country: 可选的目标国家/地区
     Returns:
-        str: The translated text.
+        str: 完整的翻译提示
     """
+    # 获取相关术语
+    relevant_terms = find_relevant_terms(source_text)
+    
+    # 生成基础提示
+    prompt = f"""请将以下{source_lang}文本翻译成{target_lang}。
+保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。"""
 
-    # 设置系统消息，定义模型角色为特定语言对的翻译专家
+    # 添加国家/地区特定要求
+    if country:
+        prompt += f"\n请使用{country}地区的用语习惯。"
+    
+    # 添加术语要求
+    if relevant_terms:
+        prompt += format_glossary(relevant_terms)
+    
+    # 添加源文本
+    prompt += f"\n\n源文本：\n{source_text}"
+    
+    return prompt
+
+
+def one_chunk_initial_translation(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    country: Optional[str] = None
+) -> str:
+    """
+    单块文本的初始翻译
+    Args:
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 待翻译文本
+        country: 可选的目标国家/地区
+    Returns:
+        str: 翻译结果
+    """
+    # 设置系统消息
     system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
-
-    # 构建翻译提示
-    translation_prompt = f"""This is an {source_lang} to {target_lang} translation, please provide the {target_lang} translation for this text. \
-Do not provide any explanations or text apart from the translation.
-{source_lang}: {source_text}
-
-{target_lang}:"""
-
+    
+    # 生成带术语的翻译提示
+    prompt = format_translation_prompt_with_terms(
+        source_lang,
+        target_lang,
+        source_text,
+        country
+    )
+    
     # 获取翻译结果
-    translation = get_completion(translation_prompt, system_message=system_message)
-
+    translation = get_completion(prompt, system_message=system_message)
+    
     return translation
 
 
-def one_chunk_reflect_on_translation(
-    source_lang: str,    # 源语言
-    target_lang: str,    # 目标语言
-    source_text: str,    # 原始文本
-    translation_1: str,  # 初次翻译结果
-    country: str = "",   # 目标语言所在国家（可选）
-) -> str:  # 返回对翻译的反思和建议
+def format_reflection_prompt_with_terms(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    translation: str,
+    country: Optional[str] = None
+) -> str:
     """
-    Use an LLM to reflect on the translation, treating the entire text as one chunk.
-
+    生成包含术语验证的反思提示
     Args:
-        source_lang (str): The source language of the text.
-        target_lang (str): The target language of the translation.
-        source_text (str): The original text in the source language.
-        translation_1 (str): The initial translation of the source text.
-        country (str): Country specified for the target language.
-
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 原文
+        translation: 当前翻译
+        country: 可选的目标国家/地区
     Returns:
-        str: The LLM's reflection on the translation, providing constructive criticism and suggestions for improvement.
+        str: 完整的反思提示
     """
-    #使用语言模型对翻译结果进行反思，将整个文本作为一个块处理。
-    #参数:
-    #        source_lang (str): 源语言
-    #        target_lang (str): 目标语言
-    #        source_text (str): 原始文本
-    #        translation_1 (str): 初次翻译结果
-    #        country (str): 目标语言使用的国家
-    #返回:
-    #        str: 语言模型对翻译的反思，提供建设性批评和改进建议
+    # 获取相关术语
+    relevant_terms = find_relevant_terms(source_text)
+    
+    # 生成基础提示
+    prompt = f"""请分析以下从{source_lang}到{target_lang}的翻译，重点关注以下方面：
+1. 术语使用的准确性和一致性
+2. 翻译的完整性和准确性
+3. 语言表达的自然度
+4. 格式和标点符号的保留"""
 
-    # 设置系统消息，定义模型角色为特定语言对的翻译专家
-    system_message = f"You are an expert linguist specializing in translation from {source_lang} to {target_lang}. \
-You will be provided with a source text and its translation and your goal is to improve the translation."
+    # 添加国家/地区特定要求
+    if country:
+        prompt += f"\n5. 是否符合{country}地区的语言习惯"
+    
+    # 添加术语要求
+    if relevant_terms:
+        prompt += "\n\n## 需要关注的术语：" + format_glossary(relevant_terms)
+    
+    # 添加原文和译文
+    prompt += f"\n\n原文：\n{source_text}\n\n当前译文：\n{translation}"
+    
+    return prompt
 
-    # 如果指定了国家，构建包含国家特定要求的反思提示
-    if country != "":
-        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticism and helpful suggestions to improve the translation. \
-The final style and tone of the translation should match the style of {target_lang} colloquially spoken in {country}.
 
-The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT> and <TRANSLATION></TRANSLATION>, are as follows:
-
-<SOURCE_TEXT>
-{source_text}
-</SOURCE_TEXT>
-
-<TRANSLATION>
-{translation_1}
-</TRANSLATION>
-
-When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
-(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
-(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
-(iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
-
-Write a list of specific, helpful and constructive suggestions for improving the translation.
-Each suggestion should address one specific part of the translation.
-Output only the suggestions and nothing else."""
-
-    # 如果未指定国家，使用通用的反思提示
-    else:
-        reflection_prompt = f"""Your task is to carefully read a source text and a translation from {source_lang} to {target_lang}, and then give constructive criticisms and helpful suggestions to improve the translation. \
-
-The source text and initial translation, delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT> and <TRANSLATION></TRANSLATION>, are as follows:
-
-<SOURCE_TEXT>
-{source_text}
-</SOURCE_TEXT>
-
-<TRANSLATION>
-{translation_1}
-</TRANSLATION>
-
-When writing suggestions, pay attention to whether there are ways to improve the translation's \n\
-(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),\n\
-(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules, and ensuring there are no unnecessary repetitions),\n\
-(iii) style (by ensuring the translations reflect the style of the source text and take into account any cultural context),\n\
-(iv) terminology (by ensuring terminology use is consistent and reflects the source text domain; and by only ensuring you use equivalent idioms {target_lang}).\n\
-
-Write a list of specific, helpful and constructive suggestions for improving the translation.
-Each suggestion should address one specific part of the translation.
-Output only the suggestions and nothing else."""
-
+def one_chunk_reflect_on_translation(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    translation_1: str,
+    country: Optional[str] = None
+) -> str:
+    """
+    对单块翻译进行反思
+    Args:
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 原文
+        translation_1: 初次翻译
+        country: 可选的目标国家/地区
+    Returns:
+        str: 反思结果
+    """
+    # 设置系统消息
+    system_message = f"""You are an expert linguist specializing in translation from {source_lang} to {target_lang}.
+You will be provided with a source text and its translation and your goal is to improve the translation."""
+    
+    # 生成带术语验证的反思提示
+    prompt = format_reflection_prompt_with_terms(
+        source_lang,
+        target_lang,
+        source_text,
+        translation_1,
+        country
+    )
+    
     # 获取反思结果
-    reflection = get_completion(reflection_prompt, system_message=system_message)
+    reflection = get_completion(prompt, system_message=system_message)
+    
     return reflection
 
 
-def one_chunk_improve_translation(
-    source_lang: str,    # 源语言
-    target_lang: str,    # 目标语言
-    source_text: str,    # 原始文本
-    translation_1: str,  # 初次翻译结果
-    reflection: str,     # 对初次翻译的反思和建议
-) -> str:  # 返回改进后的翻译
+def format_improvement_prompt_with_terms(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    translation: str,
+    reflection: str,
+    country: Optional[str] = None
+) -> str:
     """
-    Use the reflection to improve the translation, treating the entire text as one chunk.
-
+    生成包含术语要求的改进提示
     Args:
-        source_lang (str): The source language of the text.
-        target_lang (str): The target language for the translation.
-        source_text (str): The original text in the source language.
-        translation_1 (str): The initial translation of the source text.
-        reflection (str): Expert suggestions and constructive criticism for improving the translation.
-
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 原文
+        translation: 当前翻译
+        reflection: 翻译反思
+        country: 可选的目标国家/地区
     Returns:
-        str: The improved translation based on the expert suggestions.
+        str: 完整的改进提示
     """
-    #基于反思结果改进翻译，将整个文本作为一个块处理。
-    #参数:
-        #source_lang (str): 源语言
-        #target_lang (str): 目标语言
-        #source_text (str): 原始文本
-        #translation_1 (str): 初次翻译结果
-        #reflection (str): 专家对翻译的建议和建设性批评
-    #返回:
-        #str: 基于专家建议改进后的翻译
+    # 获取相关术语
+    relevant_terms = find_relevant_terms(source_text)
+    
+    # 生成基础提示
+    prompt = f"""请根据以下反馈改进这段从{source_lang}到{target_lang}的翻译。
+重点关注术语使用的准确性和一致性。"""
 
-
-
-    # 设置系统消息，定义模型角色为特定语言对的翻译编辑专家
-    system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
-
-    # 构建改进翻译的提示
-    prompt = f"""Your task is to carefully read, then edit, a translation from {source_lang} to {target_lang}, taking into
-account a list of expert suggestions and constructive criticisms.
-
-The source text, the initial translation, and the expert linguist suggestions are delimited by XML tags <SOURCE_TEXT></SOURCE_TEXT>, <TRANSLATION></TRANSLATION> and <EXPERT_SUGGESTIONS></EXPERT_SUGGESTIONS> \
-as follows:
-
-<SOURCE_TEXT>
+    # 添加国家/地区特定要求
+    if country:
+        prompt += f"\n请确保符合{country}地区的语言习惯。"
+    
+    # 添加术语要求
+    if relevant_terms:
+        prompt += "\n\n## 术语要求：" + format_glossary(relevant_terms)
+    
+    # 添加原文、当前译文和反思建议
+    prompt += f"""
+原文：
 {source_text}
-</SOURCE_TEXT>
 
-<TRANSLATION>
-{translation_1}
-</TRANSLATION>
+当前译文：
+{translation}
 
-<EXPERT_SUGGESTIONS>
+改进建议：
 {reflection}
-</EXPERT_SUGGESTIONS>
 
-Please take into account the expert suggestions when editing the translation. Edit the translation by ensuring:
+请提供改进后的译文："""
+    
+    return prompt
 
-(i) accuracy (by correcting errors of addition, mistranslation, omission, or untranslated text),
-(ii) fluency (by applying {target_lang} grammar, spelling and punctuation rules and ensuring there are no unnecessary repetitions), \
-(iii) style (by ensuring the translations reflect the style of the source text)
-(iv) terminology (inappropriate for context, inconsistent use), or
-(v) other errors.
 
-Output only the new translation and nothing else."""
-
+def one_chunk_improve_translation(
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    translation_1: str,
+    reflection: str,
+    country: Optional[str] = None
+) -> str:
+    """
+    改进单块翻译
+    Args:
+        source_lang: 源语言代码
+        target_lang: 目标语言代码
+        source_text: 原文
+        translation_1: 初次翻译
+        reflection: 翻译反思
+        country: 可选的目标国家/地区
+    Returns:
+        str: 改进后的翻译
+    """
+    # 设置系统消息
+    system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
+    
+    # 生成带术语要求的改进提示
+    prompt = format_improvement_prompt_with_terms(
+        source_lang,
+        target_lang,
+        source_text,
+        translation_1,
+        reflection,
+        country
+    )
+    
     # 获取改进后的翻译
-    translation_2 = get_completion(prompt, system_message)
-
+    translation_2 = get_completion(prompt, system_message=system_message)
+    
     return translation_2
 
 
@@ -311,7 +360,7 @@ def one_chunk_translate_text(
 
     # 获取初次翻译
     translation_1 = one_chunk_initial_translation(
-        source_lang, target_lang, source_text
+        source_lang, target_lang, source_text, country
     )
 
     # 获取对初次翻译的反思
@@ -320,7 +369,7 @@ def one_chunk_translate_text(
     )
     # 基于反思改进翻译
     translation_2 = one_chunk_improve_translation(
-        source_lang, target_lang, source_text, translation_1, reflection
+        source_lang, target_lang, source_text, translation_1, reflection, country
     )
 
     return translation_2
