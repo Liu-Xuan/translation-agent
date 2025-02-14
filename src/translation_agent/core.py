@@ -131,9 +131,23 @@ def translate(
     # 添加术语要求
     prompt = base_prompt + format_glossary(relevant_terms)
     
-    # TODO: 实现实际的翻译调用
-    # 这里需要集成具体的翻译API
-    translated_text = "翻译结果示例"  # 临时占位
+    # 添加源文本
+    prompt += f"\n\n源文本：\n\n{source_text}"
+    
+    # 使用utils中的get_completion函数进行翻译
+    from .utils import get_completion
+    
+    # 设置适当的system_message
+    system_message = "你是一个专业的翻译助手，精通多种语言。请严格按照要求进行翻译，保持格式不变。"
+    
+    try:
+        translated_text = get_completion(
+            prompt=prompt,
+            system_message=system_message
+        )
+    except Exception as e:
+        print(f"翻译出错: {str(e)}")
+        translated_text = str(e)
     
     if debug:
         return format_translation_debug(source_text, translated_text, [])

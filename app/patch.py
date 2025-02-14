@@ -4,9 +4,16 @@ import time  # 用于时间相关操作，如延时控制
 from functools import wraps  # 用于装饰器功能，保持函数元数据
 from threading import Lock  # 用于线程同步，确保并发安全
 from typing import Optional, Union  # 类型提示，用于静态类型检查
+import logging  # 导入日志模块
+
+# 配置日志记录
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # 导入第三方依赖库
-import gradio as gr  # Web界面框架，用于构建用户界面
 import openai  # OpenAI API客户端，用于与各种LLM服务通信
 import translation_agent.utils as utils  # 导入项目的核心工具函数模块
 
@@ -17,6 +24,10 @@ TEMPERATURE = 0.3  # 模型输出的随机性参数，越低越确定性，越�
 # 当前在UI中隐藏了JSON模式选项，计划在后续版本中更新此功能
 JS_MODE = False  # JSON输出模式开关，控制API返回格式
 ENDPOINT = ""  # 当前使用的API端点，用于选择不同的LLM服务提供商
+
+class TranslationError(Exception):
+    """翻译过程中的自定义异常类"""
+    pass
 
 def model_load(
     endpoint: str,  # API服务提供商标识，如"OpenAI"、"Groq"等
@@ -47,6 +58,11 @@ def model_load(
 
     # 根据不同的API提供商配置对应的客户端
     match endpoint:
+        case "XiaoAI":  # 添加小爱API支持
+            client = openai.OpenAI(
+                api_key=api_key if api_key else os.getenv("XIAOAI_API_KEY"),
+                base_url=os.getenv("XIAOAI_API_BASE", "https://xiaoai.plus/v1"),
+            )
         case "OpenAI":  # OpenAI官方API配置
             client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # 使用环境变量中的API密钥
         case "Groq":  # Groq高性能推理服务配置
@@ -105,81 +121,85 @@ def rate_limit(get_max_per_minute):
         return wrapper  # 返回包装后的函数
     return decorator  # 返回装饰器函数
 
-@rate_limit(lambda: RPM)  # 使用当前的RPM值作为频率限制
-def get_completion(
-    prompt: str,  # 用户输入的提示文本
-    system_message: str = "You are a helpful assistant.",  # 系统角色设定
-    model: str = "gpt-4-turbo",  # 默认使用的模型
-    temperature: float = 0.3,  # 输出随机性参数
-    json_mode: bool = False,  # JSON输出模式开关
-) -> Union[str, dict]:  # 返回字符串或字典类型
+def retry_on_error(initial_delay=1, backoff_factor=2):
     """
-        Generate a completion using the OpenAI API.
-
-    Args:
-        prompt (str): The user's prompt or query.
-        system_message (str, optional): The system message to set the context for the assistant.
-            Defaults to "You are a helpful assistant.".
-        model (str, optional): The name of the OpenAI model to use for generating the completion.
-            Defaults to "gpt-4-turbo".
-        temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
-            Defaults to 0.3.
-        json_mode (bool, optional): Whether to return the response in JSON format.
-            Defaults to False.
-
-    Returns:
-        Union[str, dict]: The generated completion.
-            If json_mode is True, returns the complete API response as a dictionary.
-            If json_mode is False, returns the generated text as a string.
-    """
-    # 调用LLM API生成回复的核心函数
-    # 该函数负责实际的API调用，支持普通文本和JSON两种输出模式，
-    # 并包含错误处理机制。所有的翻译相关调用最终都会使用此函数。
-        #prompt: 用户的输入提示
-        #system_message: 系统提示信息，设定AI助手的角色和行为
-        #model: 要使用的模型名称
-        #temperature: 输出的随机性程度
-        #json_mode: 是否返回JSON格式的响应
-        #Union[str, dict]: 模型生成的回复，可能是文本或JSON对象
-
+    装饰器：为函数添加无限重试机制
     
+    Args:
+        initial_delay (int): 初始延迟时间（秒）
+        backoff_factor (int): 退避因子，每次重试后延迟时间将乘以此因子
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            delay = initial_delay
+            attempt = 1
+            last_exception = None
+            
+            while True:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_exception = e
+                    logger.warning(f"尝试 {attempt} 失败: {str(e)}")
+                    logger.info(f"等待 {delay} 秒后重试...")
+                    time.sleep(delay)
+                    delay *= backoff_factor
+                    attempt += 1
+            
+            return None  # 不应该到达这里
+        return wrapper
+    return decorator
 
-    # 使用全局设置覆盖默认参数
-    model = MODEL  # 使用全局设置的模型
-    temperature = TEMPERATURE  # 使用全局设置的温度参数
-    json_mode = JS_MODE  # 使用全局设置的JSON模式
-
-    if json_mode:  # JSON输出模式
-        try:
-            # 创建API请求，指定JSON响应格式
-            response = client.chat.completions.create(
-                model=model,  # 使用指定的模型
-                temperature=temperature,  # 设置温度参数
-                top_p=1,  # 控制输出的多样性
-                response_format={"type": "json_object"},  # 指定JSON输出格式
-                messages=[  # 构建对话消息
-                    {"role": "system", "content": system_message},  # 系统角色设定
-                    {"role": "user", "content": prompt},  # 用户输入
-                ],
-            )
-            return response.choices[0].message.content  # 返回生成的JSON内容
-        except Exception as e:
-            raise gr.Error(f"An unexpected error occurred: {e}") from e  # 错误处理
-    else:  # 普通文本输出模式
-        try:
-            # 创建API请求，使用默认文本响应格式
+@retry_on_error(initial_delay=1, backoff_factor=2)
+def get_completion(
+    prompt: str,
+    system_message: str = "You are a helpful assistant.",
+    model: str = "gpt-4-turbo",
+    temperature: float = 0.3,
+    json_mode: bool = False,
+    timeout: float = 60.0,
+) -> Union[str, dict]:
+    """
+    使用OpenAI API生成补全，包含无限重试机制
+    
+    Args:
+        prompt: 用户提示
+        system_message: 系统消息
+        model: 模型名称
+        temperature: 温度参数
+        json_mode: JSON输出模式
+        timeout: 请求超时时间（秒）
+    Returns:
+        生成的回复
+    """
+    try:
+        if json_mode:
             response = client.chat.completions.create(
                 model=model,
                 temperature=temperature,
-                top_p=1,
+                response_format={"type": "json_object"},
                 messages=[
                     {"role": "system", "content": system_message},
                     {"role": "user", "content": prompt},
                 ],
+                timeout=timeout
             )
-            return response.choices[0].message.content  # 返回生成的文本内容
-        except Exception as e:
-            raise gr.Error(f"An unexpected error occurred: {e}") from e  # 错误处理
+        else:
+            response = client.chat.completions.create(
+                model=model,
+                temperature=temperature,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt},
+                ],
+                timeout=timeout
+            )
+        return response.choices[0].message.content
+                
+    except Exception as e:
+        logger.error(f"API调用失败: {str(e)}")
+        raise TranslationError(f"API调用失败: {str(e)}") from e
 
 # 将当前模块的API调用函数注入到utils模块中，使其可以使用相同的API调用功能
 utils.get_completion = get_completion

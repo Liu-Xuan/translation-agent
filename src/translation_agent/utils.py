@@ -1,6 +1,8 @@
 # 导入所需的Python标准库
 import os
 from typing import List, Union, Dict, Optional  # 导入类型提示所需的类型
+import time
+import logging
 
 # 导入第三方依赖库
 import openai  # OpenAI API客户端
@@ -19,70 +21,78 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # 定义每个文本块的最大token数
 MAX_TOKENS_PER_CHUNK = 1000  # 如果文本超过这个token数，将被分割成多个块逐块翻译
 
+# 配置日志记录
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 
 def get_completion(
-    prompt: str,  # 用户提示或查询
-    system_message: str = "You are a helpful assistant.",  # 系统消息，设置助手的上下文
-    model: str = "gpt-4-turbo",  # 使用的OpenAI模型名称
-    temperature: float = 0.3,  # 采样温度，控制生成文本的随机性
-    json_mode: bool = False,  # 是否返回JSON格式的响应
-) -> Union[str, dict]:  # 返回字符串或字典类型
+    prompt: str,
+    system_message: str = "You are a helpful assistant.",
+    model: str = "gpt-4-turbo",
+    temperature: float = 0.3,
+    json_mode: bool = False,
+    max_retries: int = 3,  # 最大重试次数
+    retry_delay: float = 5.0,  # 初始重试延迟（秒）
+    timeout: float = 60.0,  # 请求超时时间
+) -> Union[str, dict]:
     """
-        Generate a completion using the OpenAI API.
-
+    使用OpenAI API生成补全，包含重试机制
+    
     Args:
-        prompt (str): The user's prompt or query.
-        system_message (str, optional): The system message to set the context for the assistant.
-            Defaults to "You are a helpful assistant.".
-        model (str, optional): The name of the OpenAI model to use for generating the completion.
-            Defaults to "gpt-4-turbo".
-        temperature (float, optional): The sampling temperature for controlling the randomness of the generated text.
-            Defaults to 0.3.
-        json_mode (bool, optional): Whether to return the response in JSON format.
-            Defaults to False.
-
+        prompt: 用户提示
+        system_message: 系统消息
+        model: 模型名称
+        temperature: 温度参数
+        json_mode: JSON输出模式
+        max_retries: 最大重试次数
+        retry_delay: 重试间隔（秒）
+        timeout: 请求超时时间（秒）
     Returns:
-        Union[str, dict]: The generated completion.
-            If json_mode is True, returns the complete API response as a dictionary.
-            If json_mode is False, returns the generated text as a string.
+        生成的回复
     """
-
-    #参数:
-        #prompt (str): 用户的提示或查询
-        #system_message (str, 可选): 设置助手上下文的系统消息
-        #model (str, 可选): 使用的OpenAI模型名称
-        #temperature (float, 可选): 控制生成文本随机性的采样温度
-        #json_mode (bool, 可选): 是否返回JSON格式的响应
-    #返回:
-        #Union[str, dict]: 生成的补全响应
-            #如果json_mode为True，返回完整的API响应字典
-            #如果json_mode为False，返回生成的文本字符串
-
-    if json_mode:
-        # 创建聊天补全请求，指定JSON响应格式
-        response = client.chat.completions.create(
-            model=model,
-            temperature=temperature,
-            top_p=1,
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt},
-            ],
-        )
-        return response.choices[0].message.content
-    else:
-        # 创建普通的聊天补全请求
-        response = client.chat.completions.create(
-            model=model,
-            temperature=temperature,
-            top_p=1,
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": prompt},
-            ],
-        )
-        return response.choices[0].message.content
+    for attempt in range(max_retries):
+        try:
+            if json_mode:
+                response = client.chat.completions.create(
+                    model=model,
+                    temperature=temperature,
+                    top_p=1,
+                    response_format={"type": "json_object"},
+                    messages=[
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": prompt},
+                    ],
+                    timeout=timeout
+                )
+                return response.choices[0].message.content
+            else:
+                response = client.chat.completions.create(
+                    model=model,
+                    temperature=temperature,
+                    top_p=1,
+                    messages=[
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": prompt},
+                    ],
+                    timeout=timeout
+                )
+                return response.choices[0].message.content
+                
+        except Exception as e:
+            if attempt < max_retries - 1:  # 如果还有重试机会
+                logger.warning(f"API调用失败 (尝试 {attempt + 1}/{max_retries}): {str(e)}")
+                logger.info(f"等待 {retry_delay} 秒后重试...")
+                time.sleep(retry_delay)
+                # 每次重试增加等待时间（指数退避）
+                retry_delay *= 1.5
+                continue
+            else:
+                logger.error(f"API调用失败，已重试{max_retries}次: {str(e)}")
+                raise TranslationError(f"API调用失败，已重试{max_retries}次: {str(e)}") from e
 
 
 def format_translation_prompt_with_terms(
@@ -106,15 +116,27 @@ def format_translation_prompt_with_terms(
     
     # 生成基础提示
     prompt = f"""请将以下{source_lang}文本翻译成{target_lang}。
-保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。"""
+保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。
+
+翻译要求：
+1. 准确性：确保翻译准确传达原文含义
+2. 格式保留：保持所有格式标记和特殊符号
+3. 术语一致性：严格遵守术语表要求
+4. 语言自然度：确保译文符合目标语言表达习惯"""
 
     # 添加国家/地区特定要求
     if country:
-        prompt += f"\n请使用{country}地区的用语习惯。"
+        prompt += f"\n5. 地区适配：使用{country}地区的用语习惯和表达方式"
     
     # 添加术语要求
     if relevant_terms:
+        prompt += "\n\n## 术语表要求："
         prompt += format_glossary(relevant_terms)
+        prompt += "\n请严格遵守以上术语表的翻译要求。对于术语的处理：\n"
+        prompt += "1. 优先使用术语表中的对应翻译\n"
+        prompt += "2. 保持术语的一致性\n"
+        prompt += "3. 注意术语的上下文含义\n"
+        prompt += "4. 保留术语的专业性"
     
     # 添加源文本
     prompt += f"\n\n源文本：\n{source_text}"
@@ -178,21 +200,48 @@ def format_reflection_prompt_with_terms(
     
     # 生成基础提示
     prompt = f"""请分析以下从{source_lang}到{target_lang}的翻译，重点关注以下方面：
-1. 术语使用的准确性和一致性
-2. 翻译的完整性和准确性
-3. 语言表达的自然度
-4. 格式和标点符号的保留"""
+
+1. 术语翻译：
+   - 术语使用的准确性
+   - 术语翻译的一致性
+   - 术语上下文的适当性
+   - 专业术语的规范性
+
+2. 翻译质量：
+   - 内容的完整性
+   - 含义的准确性
+   - 表达的自然度
+   - 语言的流畅度
+
+3. 格式规范：
+   - 格式标记的保留
+   - 标点符号的正确性
+   - 特殊标记的处理
+   - 排版的一致性"""
 
     # 添加国家/地区特定要求
     if country:
-        prompt += f"\n5. 是否符合{country}地区的语言习惯"
+        prompt += f"\n4. 地区适配：\n   - 符合{country}地区的语言习惯\n   - 使用地区常用表达\n   - 考虑文化差异"
     
     # 添加术语要求
     if relevant_terms:
-        prompt += "\n\n## 需要关注的术语：" + format_glossary(relevant_terms)
+        prompt += "\n\n## 需要重点关注的术语："
+        prompt += format_glossary(relevant_terms)
+        prompt += "\n\n请特别注意：\n"
+        prompt += "1. 检查每个术语是否按照术语表正确翻译\n"
+        prompt += "2. 验证术语在上下文中的使用是否恰当\n"
+        prompt += "3. 确认术语的专业性是否得到保持\n"
+        prompt += "4. 评估术语翻译的一致性"
     
     # 添加原文和译文
     prompt += f"\n\n原文：\n{source_text}\n\n当前译文：\n{translation}"
+    
+    # 添加反思要求
+    prompt += "\n\n请提供具体的改进建议，包括：\n"
+    prompt += "1. 术语使用问题\n"
+    prompt += "2. 表达改进建议\n"
+    prompt += "3. 格式调整建议\n"
+    prompt += "4. 其他需要注意的问题"
     
     return prompt
 
@@ -259,15 +308,39 @@ def format_improvement_prompt_with_terms(
     
     # 生成基础提示
     prompt = f"""请根据以下反馈改进这段从{source_lang}到{target_lang}的翻译。
-重点关注术语使用的准确性和一致性。"""
+
+改进重点：
+1. 术语处理
+   - 严格遵守术语表要求
+   - 保持术语翻译一致性
+   - 确保术语使用准确
+   - 维护专业术语规范
+
+2. 翻译质量
+   - 提高表达准确性
+   - 增强语言流畅度
+   - 保持内容完整性
+   - 改进表达自然度
+
+3. 格式规范
+   - 保持格式标记完整
+   - 规范标点符号使用
+   - 正确处理特殊标记
+   - 统一排版风格"""
 
     # 添加国家/地区特定要求
     if country:
-        prompt += f"\n请确保符合{country}地区的语言习惯。"
+        prompt += f"\n4. 地区适配\n   - 符合{country}地区表达习惯\n   - 使用地区常用用语\n   - 注意文化差异处理"
     
     # 添加术语要求
     if relevant_terms:
-        prompt += "\n\n## 术语要求：" + format_glossary(relevant_terms)
+        prompt += "\n\n## 术语表要求："
+        prompt += format_glossary(relevant_terms)
+        prompt += "\n\n术语处理原则：\n"
+        prompt += "1. 必须使用术语表规定的译法\n"
+        prompt += "2. 确保术语在上下文中使用恰当\n"
+        prompt += "3. 保持术语翻译的专业性\n"
+        prompt += "4. 维护术语使用的一致性"
     
     # 添加原文、当前译文和反思建议
     prompt += f"""
@@ -279,6 +352,12 @@ def format_improvement_prompt_with_terms(
 
 改进建议：
 {reflection}
+
+请根据以上要求提供改进后的译文。注意：
+1. 认真考虑所有改进建议
+2. 确保术语使用准确
+3. 保持格式完整性
+4. 提升整体翻译质量
 
 请提供改进后的译文："""
     
