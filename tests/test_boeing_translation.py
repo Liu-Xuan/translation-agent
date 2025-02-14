@@ -76,6 +76,195 @@ class TranslationRecorder:
             for item, status in validation_items.items():
                 f.write(f"- [{status}] {item}\n")
             f.write("\n")
+    
+    def add_term_analysis(self, source_text: str):
+        """添加术语匹配分析"""
+        # 从术语表中获取术语
+        with open(Path(project_root) / "data/glossary.json", 'r', encoding='utf-8') as f:
+            glossary = json.load(f)
+        terms = glossary['terms']
+        
+        # 统计术语使用频率
+        term_counts = {}
+        for term in terms:
+            source_text_lower = source_text.lower()
+            term_text = term['source']['text'].lower()
+            count = source_text_lower.count(term_text)
+            if count > 0:  # 只记录在源文本中出现的术语
+                term_counts[term['source']['text']] = count
+        
+        # 过滤掉未使用的术语
+        used_terms = [term for term in terms if term['source']['text'] in term_counts]
+        
+        # 按使用频率排序
+        sorted_terms = sorted(term_counts.items(), key=lambda x: x[1], reverse=True)
+        
+        with open(self.report_path, 'a', encoding='utf-8') as f:
+            f.write("## 术语匹配分析\n\n")
+            
+            # 记录识别到的关键术语
+            f.write("### 识别到的关键术语\n")
+            f.write("1. **文档标题相关**\n")
+            title_terms = [t for t in used_terms if any(x in t['source']['text'].lower() for x in ['description', 'action', 'list', 'digest'])]
+            for term in title_terms:
+                f.write(f"   - `{term['source']['text']}` → `{term['target']['text']}`\n")
+            
+            f.write("\n2. **技术术语**\n")
+            tech_terms = [t for t in used_terms if any(x in t['source']['text'].lower() for x in ['serial', 'fault', 'software', 'deck', 'service'])]
+            for term in tech_terms:
+                f.write(f"   - `{term['source']['text']}` → `{term['target']['text']}`\n")
+            
+            f.write("\n3. **通用术语**\n")
+            general_terms = [t for t in used_terms if t not in title_terms and t not in tech_terms]
+            for term in general_terms:
+                f.write(f"   - `{term['source']['text']}` → `{term['target']['text']}`\n")
+            
+            # 记录术语使用统计
+            f.write("\n### 术语使用统计\n")
+            f.write(f"- 总识别术语数：{len(used_terms)}个\n")  # 修改为使用实际使用的术语数量
+            f.write("- 高频术语：\n")
+            for term, count in sorted_terms[:3]:
+                f.write(f"  * `{term}`（出现{count}次）\n")
+            
+            # 记录专有名词保留
+            f.write("- 专有名词保留：\n")
+            abbrs = [t['source']['text'] for t in used_terms if '(' in t['source']['text']]  # 只显示使用的术语中的缩写
+            for abbr in abbrs:
+                if '(' in abbr:
+                    short_form = abbr[abbr.find('(')+1:abbr.find(')')]
+                    f.write(f"  * {short_form}\n")
+    
+    def add_prompt_analysis(self):
+        """添加提示词嵌入分析"""
+        with open(self.report_path, 'a', encoding='utf-8') as f:
+            f.write("\n## 提示词嵌入分析\n\n")
+            
+            # 翻译提示词结构
+            f.write("### 翻译提示词结构\n")
+            f.write("```\n")
+            f.write("""请将以下英文文本翻译成中文。
+保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。
+
+翻译要求：
+1. 准确性：确保翻译准确传达原文含义
+2. 格式保留：保持所有格式标记和特殊符号
+3. 术语一致性：严格遵守术语表要求
+4. 语言自然度：确保译文符合目标语言表达习惯
+5. 地区适配：使用CN地区的用语习惯和表达方式
+
+## 术语表要求：
+- 【强制】'FLEET TEAM DIGEST' → 'FLEET TEAM DIGEST（FTD）'（上下文：机队技术文件摘要）
+- 【强制】'Revision Description' → '改版说明'（上下文：文档修订信息）
+- 【强制】'Final Action' → '最终措施'（上下文：维修或故障处理的最终解决方案）
+[...其他术语...]
+
+请严格遵守以上术语表的翻译要求。对于术语的处理：
+1. 优先使用术语表中的对应翻译
+2. 保持术语的一致性
+3. 注意术语的上下文含义
+4. 保留术语的专业性
+
+源文本：
+[源文本内容]
+```\n""")
+            
+            # 反思提示词结构
+            f.write("\n### 反思提示词结构\n")
+            f.write("```\n")
+            f.write("""请分析以下从英文到中文的翻译，重点关注以下方面：
+
+1. 术语翻译：
+   - 术语使用的准确性
+   - 术语翻译的一致性
+   - 术语上下文的适当性
+   - 专业术语的规范性
+
+2. 翻译质量：
+   - 内容的完整性
+   - 含义的准确性
+   - 表达的自然度
+   - 语言的流畅度
+
+3. 格式规范：
+   - 格式标记的保留
+   - 标点符号的正确性
+   - 特殊标记的处理
+   - 排版的一致性
+
+4. 地区适配：
+   - 符合CN地区的语言习惯
+   - 使用地区常用表达
+   - 考虑文化差异
+
+## 需要重点关注的术语：
+[术语列表]
+
+请特别注意：
+1. 检查每个术语是否按照术语表正确翻译
+2. 验证术语在上下文中的使用是否恰当
+3. 确认术语的专业性是否得到保持
+4. 评估术语翻译的一致性
+
+原文：
+[原文内容]
+
+当前译文：
+[译文内容]
+```\n""")
+            
+            # 改进提示词结构
+            f.write("\n### 改进提示词结构\n")
+            f.write("```\n")
+            f.write("""请根据以下反馈改进这段从英文到中文的翻译。
+
+改进重点：
+1. 术语处理
+   - 严格遵守术语表要求
+   - 保持术语翻译一致性
+   - 确保术语使用准确
+   - 维护专业术语规范
+
+2. 翻译质量
+   - 提高表达准确性
+   - 增强语言流畅度
+   - 保持内容完整性
+   - 改进表达自然度
+
+3. 格式规范
+   - 保持格式标记完整
+   - 规范标点符号使用
+   - 正确处理特殊标记
+   - 统一排版风格
+
+4. 地区适配
+   - 符合CN地区表达习惯
+   - 使用地区常用用语
+   - 注意文化差异处理
+
+## 术语表要求：
+[术语列表]
+
+术语处理原则：
+1. 必须使用术语表规定的译法
+2. 确保术语在上下文中使用恰当
+3. 保持术语翻译的专业性
+4. 维护术语使用的一致性
+
+原文：
+[原文内容]
+
+当前译文：
+[译文内容]
+
+改进建议：
+[改进建议内容]
+
+请根据以上要求提供改进后的译文。注意：
+1. 认真考虑所有改进建议
+2. 确保术语使用准确
+3. 保持格式完整性
+4. 提升整体翻译质量
+```\n""")
 
 def test_api_connection():
     """测试API连接"""
@@ -146,6 +335,12 @@ def test_boeing_doc_translation():
         recorder.add_content(f"- 文本长度: {len(source_text)} 字符")
         recorder.add_content("- 文本预览:")
         recorder.add_content(f"```\n{source_text[:500]}...\n```")
+        
+        # 添加术语匹配分析
+        recorder.add_term_analysis(source_text)
+        
+        # 添加提示词嵌入分析
+        recorder.add_prompt_analysis()
         
         # 第一阶段：初始翻译
         recorder.add_section("第一阶段：初始翻译")

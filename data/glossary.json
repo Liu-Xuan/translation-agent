@@ -66,6 +66,96 @@
         "lang": "zh"
       },
       "context": "测试用形容词"
+    },
+    {
+      "id": "term_001",
+      "source": {"text": "Revision Description"},
+      "target": {"text": "改版说明"},
+      "context": "文档修订信息"
+    },
+    {
+      "id": "term_002",
+      "source": {"text": "Final Action"},
+      "target": {"text": "最终措施"},
+      "context": "维修或故障处理的最终解决方案"
+    },
+    {
+      "id": "term_003",
+      "source": {"text": "serial numbers (S/Ns)"},
+      "target": {"text": "序号（S/Ns）"},
+      "context": "飞机或部件的序列号"
+    },
+    {
+      "id": "term_004",
+      "source": {"text": "Present Leg Fault (PLF)"},
+      "target": {"text": "当前航段故障（PLF）"},
+      "context": "当前飞行航段中出现的故障"
+    },
+    {
+      "id": "term_005",
+      "source": {"text": "Loadable Software Airplane Part Library (LSAPL)"},
+      "target": {"text": "机载软件电子库房（LSAPL）"},
+      "context": "存储和管理飞机可加载软件的系统"
+    },
+    {
+      "id": "term_006",
+      "source": {"text": "Flight Deck"},
+      "target": {"text": "驾驶舱"},
+      "context": "飞机驾驶员操作区域"
+    },
+    {
+      "id": "term_007",
+      "source": {"text": "service bulletins"},
+      "target": {"text": "服务通告"},
+      "context": "制造商发布的技术服务文件"
+    },
+    {
+      "id": "term_008",
+      "source": {"text": "Interim Action"},
+      "target": {"text": "临时措施"},
+      "context": "在最终解决方案实施前的临时处理方法"
+    },
+    {
+      "id": "term_009",
+      "source": {"text": "units"},
+      "target": {"text": "组件"},
+      "context": "飞机系统或设备的组成单元"
+    },
+    {
+      "id": "term_010",
+      "source": {"text": "Close this FTD"},
+      "target": {"text": "关闭此 FTD"},
+      "context": "结束当前机队技术文件"
+    },
+    {
+      "id": "term_011",
+      "source": {"text": "Parts"},
+      "target": {"text": "部件"},
+      "context": "飞机的零件或组件"
+    },
+    {
+      "id": "term_012",
+      "source": {"text": "Parts List"},
+      "target": {"text": "部件清单"},
+      "context": "相关部件的列表"
+    },
+    {
+      "id": "term_013",
+      "source": {"text": "Dispatch"},
+      "target": {"text": "放行"},
+      "context": "飞机的放行操作"
+    },
+    {
+      "id": "term_014",
+      "source": {"text": "Fleet"},
+      "target": {"text": "机队"},
+      "context": "航空公司的飞机队伍"
+    },
+    {
+      "id": "term_015",
+      "source": {"text": "FLEET TEAM DIGEST"},
+      "target": {"text": "FLEET TEAM DIGEST（FTD）"},
+      "context": "机队技术文件摘要"
     }
   ]
 } 
