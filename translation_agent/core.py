@@ -4,38 +4,7 @@
 """
 import json
 from typing import Dict, List, Optional, Tuple
-from .glossary_utils import find_relevant_terms, get_glossary
-
-# 新增术语处理函数
-def load_glossary(file_path='data/glossary.json'):
-    """加载术语表文件"""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {'terms': []}
-
-def format_glossary(terms: List[Dict]) -> str:
-    """
-    格式化术语提示
-    Args:
-        terms: 术语列表
-    Returns:
-        格式化后的术语提示文本
-    """
-    if not terms:
-        return ""
-    
-    prompt = "\n\n## 术语翻译要求\n请严格遵守以下术语对应关系："
-    
-    # 按术语长度排序（长术语优先）
-    for term in terms:
-        # 添加术语上下文提示
-        context = term.get('context', '')
-        context_note = f"（上下文：{context}）" if context else ""
-        prompt += f"\n- 【强制】'{term['source']['text']}' → '{term['target']['text']}'{context_note}"
-    
-    return prompt
+from .glossary_utils import find_relevant_terms, format_glossary
 
 def mock_translate(text: str, terms: List[Dict]) -> Tuple[str, List[Dict[str, str]]]:
     """
@@ -136,6 +105,9 @@ def translate(
     Returns:
         翻译后的文本或调试信息
     """
+    if not source_text:
+        return "未找到匹配的术语" if debug else ""
+        
     # 动态获取相关术语
     relevant_terms = find_relevant_terms(source_text)
     
@@ -159,9 +131,23 @@ def translate(
     # 添加术语要求
     prompt = base_prompt + format_glossary(relevant_terms)
     
-    # TODO: 实现实际的翻译调用
-    # 这里需要集成具体的翻译API
-    translated_text = "翻译结果示例"  # 临时占位
+    # 添加源文本
+    prompt += f"\n\n源文本：\n\n{source_text}"
+    
+    # 使用utils中的get_completion函数进行翻译
+    from .utils import get_completion
+    
+    # 设置适当的system_message
+    system_message = "你是一个专业的翻译助手，精通多种语言。请严格按照要求进行翻译，保持格式不变。"
+    
+    try:
+        translated_text = get_completion(
+            prompt=prompt,
+            system_message=system_message
+        )
+    except Exception as e:
+        print(f"翻译出错: {str(e)}")
+        translated_text = str(e)
     
     if debug:
         return format_translation_debug(source_text, translated_text, [])

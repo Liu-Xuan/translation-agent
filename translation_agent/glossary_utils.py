@@ -17,6 +17,28 @@ class GlossaryCache:
 _glossary_cache: Optional[GlossaryCache] = None
 _index_cache: Optional[Dict] = None
 
+def format_glossary(terms: List[Dict]) -> str:
+    """
+    格式化术语提示
+    Args:
+        terms: 术语列表
+    Returns:
+        格式化后的术语提示文本
+    """
+    if not terms:
+        return ""
+    
+    prompt = "\n\n## 术语翻译要求\n请严格遵守以下术语对应关系："
+    
+    # 按术语长度排序（长术语优先）
+    for term in sorted(terms, key=lambda x: len(x['source']['text']), reverse=True):
+        # 添加术语上下文提示
+        context = term.get('context', '')
+        context_note = f"（上下文：{context}）" if context else ""
+        prompt += f"\n- 【强制】'{term['source']['text']}' → '{term['target']['text']}'{context_note}"
+    
+    return prompt
+
 def load_glossary(file_path: str = 'data/glossary.json') -> Dict:
     """
     加载术语表文件

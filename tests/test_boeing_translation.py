@@ -9,34 +9,91 @@ import sys
 from pathlib import Path
 import logging
 import json
-import requests
 import time
 from datetime import datetime
+import asyncio
+from openai import OpenAI
+from openai import AsyncOpenAI
+import re
+
+# 加载环境变量
+load_dotenv()
 
 # 设置日志
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(console_handler)
 
 # 添加项目根目录到Python路径
 project_root = str(Path(__file__).parent.parent)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-# 添加src目录到Python路径
-src_path = str(Path(project_root) / 'src')
-if src_path not in sys.path:
-    sys.path.append(src_path)
-
-from app.patch import model_load, TranslationError
-from translation_agent.utils import (
-    one_chunk_translate_text,
-    one_chunk_initial_translation,
-    one_chunk_reflect_on_translation,
-    one_chunk_improve_translation
-)
-
-# 加载环境变量
-load_dotenv()
+class DeepSeekClient:
+    """DeepSeek模型客户端，支持同步和异步操作"""
+    def __init__(self):
+        api_key = os.getenv("DASHSCOPE_API_KEY")
+        if not api_key:
+            raise ValueError("请在.env文件中设置DASHSCOPE_API_KEY环境变量")
+            
+        base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        
+        # 同步客户端
+        self.sync_client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            max_retries=5,
+            timeout=300.0  # 增加到5分钟
+        )
+        
+        # 异步客户端
+        self.async_client = AsyncOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=300.0  # 增加到5分钟
+        )
+        
+        # 模型配置 - 移除重复的 stream 参数
+        self.model_configs = {
+            "deepseek-r1": {
+                "temperature": 0.3,
+                "top_p": 0.8,
+                "presence_penalty": 0.0,
+                "frequency_penalty": 0.0
+            },
+            "deepseek-v3": {
+                "temperature": 0.7,
+                "top_p": 0.6,
+                "presence_penalty": 0.95,
+                "frequency_penalty": 0.0
+            }
+        }
+    
+    async def translate_text_stream(self, text: str, model: str = "deepseek-v3") -> str:
+        """流式翻译文本"""
+        try:
+            response = await self.async_client.chat.completions.create(
+                model=model,
+                messages=[{'role': 'user', 'content': text}],
+                stream=True,  # 在这里显式设置 stream 参数
+                **self.model_configs[model]
+            )
+            
+            full_content = []
+            async for chunk in response:
+                if chunk.choices[0].delta.content:
+                    content = chunk.choices[0].delta.content
+                    full_content.append(content)
+                    print(content, end='', flush=True)
+            
+            return ''.join(full_content)
+            
+        except Exception as e:
+            logger.error(f"流式翻译失败: {str(e)}")
+            raise
 
 class TranslationRecorder:
     """翻译过程记录器"""
@@ -266,120 +323,135 @@ class TranslationRecorder:
 4. 提升整体翻译质量
 ```\n""")
 
-def test_api_connection():
-    """测试API连接"""
-    api_base = os.getenv("XIAOAI_API_BASE", "https://xiaoai.plus/v1")
-    api_key = os.getenv("XIAOAI_API_KEY")
+def split_markdown_sections(text: str, max_length: int = 200000) -> list[str]:
+    """
+    将Markdown文本按章节分块，保持文档结构完整性
+    """
+    sections = []
+    current_section = []
+    current_length = 0
     
-    logger.info(f"测试API连接: {api_base}")
-    logger.info(f"API密钥前6位: {api_key[:6] if api_key else 'None'}...")
+    # 按行分割，保持Markdown格式
+    lines = text.split('\n')
     
-    try:
-        response = requests.get(
-            f"{api_base}/models",
-            headers={"Authorization": f"Bearer {api_key}"}
-        )
-        logger.info(f"API响应状态码: {response.status_code}")
-        logger.info(f"API响应内容: {response.text[:200]}...")
+    for line in lines:
+        # 如果是标题行或当前块太大，开始新的块
+        if (line.startswith('#') and current_length > 0) or current_length + len(line) > max_length:
+            if current_section:
+                sections.append('\n'.join(current_section))
+                current_section = []
+                current_length = 0
         
-        assert response.status_code == 200, f"API连接失败: {response.text}"
-        logger.info("API连接测试成功")
-        
-    except Exception as e:
-        logger.error(f"API连接测试失败: {str(e)}")
-        raise
+        current_section.append(line)
+        current_length += len(line) + 1  # +1 for newline
+    
+    # 添加最后一个块
+    if current_section:
+        sections.append('\n'.join(current_section))
+    
+    return sections
 
-def setup_module():
-    """初始化测试环境"""
-    logger.info("开始初始化测试环境")
-    
-    api_base = os.getenv("XIAOAI_API_BASE", "https://xiaoai.plus/v1")
-    api_key = os.getenv("XIAOAI_API_KEY")
-    model = "gpt-4-1106-preview"
-    
-    logger.info(f"使用API基础URL: {api_base}")
-    logger.info(f"使用模型: {model}")
-    
-    try:
-        model_load(
-            endpoint="XiaoAI",
-            base_url=api_base,
-            model=model,
-            api_key=api_key,
-        )
-        logger.info("模型加载成功")
-        
-    except Exception as e:
-        logger.error(f"模型加载失败: {str(e)}")
-        raise
+async def translate_chunk(client: DeepSeekClient, text: str, model: str) -> str:
+    """翻译单个文本块"""
+    prompt = f"""请将以下英文文本翻译成中文。
+保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。
 
-def test_boeing_doc_translation():
-    """测试波音技术文档翻译"""
+源文本：
+{text}
+"""
+    return await client.translate_text_stream(prompt, model)
+
+async def translate_document(client: DeepSeekClient, text: str, model: str) -> str:
+    """分块翻译整个文档"""
+    chunks = split_markdown_sections(text)
+    logger.info(f"文档已分割为 {len(chunks)} 个块")
+    
+    translated_chunks = []
+    for i, chunk in enumerate(chunks, 1):
+        logger.info(f"正在翻译第 {i}/{len(chunks)} 块...")
+        translated_chunk = await translate_chunk(client, chunk, model)
+        translated_chunks.append(translated_chunk)
+        
+    return '\n'.join(translated_chunks)
+
+async def reflect_on_translation(client: DeepSeekClient, source: str, translation: str) -> str:
+    """使用deepseek-r1模型反思翻译质量"""
+    prompt = f"""请分析以下从英文到中文的翻译：
+
+原文：
+{source}
+
+译文：
+{translation}
+
+请从术语准确性、表达流畅性、格式保留等方面进行分析，并给出具体的改进建议。
+"""
+    return await client.translate_text_stream(prompt, "deepseek-r1")
+
+async def improve_translation(client: DeepSeekClient, source: str, translation: str, reflection: str) -> str:
+    """根据反思结果改进翻译"""
+    prompt = f"""请根据以下反馈改进这段翻译：
+
+原文：
+{source}
+
+当前译文：
+{translation}
+
+改进建议：
+{reflection}
+
+请提供改进后的译文：
+"""
+    return await client.translate_text_stream(prompt, "deepseek-v3")
+
+@pytest.mark.asyncio
+async def test_boeing_doc_translation():
+    """测试波音文档翻译流程"""
+    logger.info("="*50)
     logger.info("开始波音文档翻译测试")
+    logger.info("="*50)
     
-    # 初始化记录器
+    # 初始化客户端和记录器
+    client = DeepSeekClient()
     recorder = TranslationRecorder(Path(project_root) / "test_reports")
     
     # 读取源文档
     doc_path = Path(project_root) / "testcases/737MAX-FTD-46-19002_Doc_01092023/auto/737MAX-FTD-46-19002_Doc_01092023.md"
-    logger.info(f"源文档路径: {doc_path}")
     
     try:
         with open(doc_path, 'r', encoding='utf-8') as f:
             source_text = f.read()
-        logger.info(f"成功读取源文档，长度: {len(source_text)} 字符")
         
         # 记录源文档信息
         recorder.add_section("源文档信息")
         recorder.add_content(f"- 文件路径: {doc_path}")
         recorder.add_content(f"- 文本长度: {len(source_text)} 字符")
-        recorder.add_content("- 文本预览:")
-        recorder.add_content(f"```\n{source_text[:500]}...\n```")
         
-        # 添加术语匹配分析
+        # 术语分析
         recorder.add_term_analysis(source_text)
         
-        # 添加提示词嵌入分析
-        recorder.add_prompt_analysis()
-        
-        # 第一阶段：初始翻译
-        recorder.add_section("第一阶段：初始翻译")
-        recorder.add_content("### 翻译提示词")
-        initial_translation = one_chunk_initial_translation(
-            source_lang="en",
-            target_lang="zh",
-            source_text=source_text,
-            country="CN"
-        )
+        # 初始翻译（分块处理）
+        logger.info("正在进行初始翻译...")
+        initial_translation = await translate_document(client, source_text, "deepseek-v3")
         recorder.add_step_result("初始翻译结果", initial_translation)
         
-        # 第二阶段：翻译反思
-        recorder.add_section("第二阶段：翻译反思")
-        recorder.add_content("### 反思提示词")
-        reflection = one_chunk_reflect_on_translation(
-            source_lang="en",
-            target_lang="zh",
-            source_text=source_text,
-            translation_1=initial_translation,
-            country="CN"
-        )
-        recorder.add_step_result("反思结果", reflection)
+        # 翻译反思
+        logger.info("正在进行翻译反思...")
+        reflection = await reflect_on_translation(client, source_text, initial_translation)
+        recorder.add_step_result("翻译反思结果", reflection)
         
-        # 第三阶段：翻译改进
-        recorder.add_section("第三阶段：翻译改进")
-        recorder.add_content("### 改进提示词")
-        final_translation = one_chunk_improve_translation(
-            source_lang="en",
-            target_lang="zh",
-            source_text=source_text,
-            translation_1=initial_translation,
-            reflection=reflection,
-            country="CN"
+        # 翻译改进
+        logger.info("正在进行翻译改进...")
+        final_translation = await improve_translation(
+            client,
+            source_text,
+            initial_translation,
+            reflection
         )
         recorder.add_step_result("最终翻译结果", final_translation)
         
-        # 验证翻译结果
-        recorder.add_section("翻译结果验证")
+        # 验证结果
         validation_results = {
             "标题格式 (#)": "√" if "#" in final_translation else "×",
             "加粗格式 (**)": "√" if "**" in final_translation else "×",
@@ -390,25 +462,16 @@ def test_boeing_doc_translation():
         }
         recorder.add_validation_result(validation_results)
         
-        # 保存最终翻译结果
+        # 保存结果
         output_path = doc_path.parent / "737MAX-FTD-46-19002_Doc_01092023_CN.md"
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(final_translation)
+            
         logger.info(f"翻译结果已保存至: {output_path}")
-        
-        # 记录完成信息
-        recorder.add_section("翻译完成信息")
-        recorder.add_content(f"- 完成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        recorder.add_content(f"- 最终文件路径：{output_path}")
-        recorder.add_content(f"- 最终文本长度：{len(final_translation)} 字符")
-        
         return final_translation
         
     except Exception as e:
         logger.error(f"翻译过程出错: {str(e)}")
-        logger.error(f"错误类型: {type(e)}")
-        logger.error(f"错误详情: {str(e)}")
-        # 记录错误信息
         recorder.add_section("错误信息")
         recorder.add_content(f"- 错误类型: {type(e)}")
         recorder.add_content(f"- 错误详情: {str(e)}")

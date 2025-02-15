@@ -3,6 +3,8 @@ import os
 from typing import List, Union, Dict, Optional  # 导入类型提示所需的类型
 import time
 import logging
+import requests
+import json
 
 # 导入第三方依赖库
 import openai  # OpenAI API客户端
@@ -11,6 +13,7 @@ from dotenv import load_dotenv  # 用于加载环境变量
 from icecream import ic  # 用于调试输出的工具
 from langchain_text_splitters import RecursiveCharacterTextSplitter  # 文本分割工具
 from translation_agent.glossary_utils import find_relevant_terms, format_glossary
+from tqdm import tqdm  # 用于进度条显示
 
 
 # 加载本地.env文件中的环境变量
@@ -28,71 +31,131 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+class TranslationError(Exception):
+    """翻译错误异常类"""
+    pass
 
-def get_completion(
+def exponential_backoff(attempt: int, base_delay: float = 5.0) -> float:
+    """
+    计算指数退避延迟时间
+    Args:
+        attempt: 当前尝试次数（从0开始）
+        base_delay: 基础延迟时间（秒）
+    Returns:
+        计算出的延迟时间（秒）
+    """
+    return min(base_delay * (2 ** attempt), 60)  # 最大延迟60秒
+
+def calculate_timeout(text_length: int) -> float:
+    """
+    根据文本长度动态计算超时时间
+    Args:
+        text_length: 文本长度（字符数）
+    Returns:
+        计算出的超时时间（秒）
+    """
+    base_timeout = 60.0
+    # 每1000字符增加10秒
+    additional_timeout = (text_length // 1000) * 10
+    return min(base_timeout + additional_timeout, 300)  # 最大5分钟
+
+def calculate_chunk_size(token_count: int, token_limit: int) -> int:
+    """
+    优化分块大小计算，考虑上下文重叠
+    Args:
+        token_count: token总数
+        token_limit: 每个块的token限制
+    Returns:
+        计算出的块大小
+    """
+    # 添加10%的上下文重叠
+    overlap = min(100, token_limit // 10)
+    effective_limit = token_limit - overlap
+    return max(100, effective_limit)  # 确保最小块大小为100 tokens
+
+async def get_completion(
     prompt: str,
     system_message: str = "You are a helpful assistant.",
     model: str = "gpt-4-turbo",
     temperature: float = 0.3,
     json_mode: bool = False,
-    max_retries: int = 3,  # 最大重试次数
-    retry_delay: float = 5.0,  # 初始重试延迟（秒）
-    timeout: float = 60.0,  # 请求超时时间
+    max_retries: int = 3,
+    retry_delay: float = 5.0,
+    timeout: float = 60.0
 ) -> Union[str, dict]:
-    """
-    使用OpenAI API生成补全，包含重试机制
+    """使用API生成补全，包含改进的重试机制"""
     
-    Args:
-        prompt: 用户提示
-        system_message: 系统消息
-        model: 模型名称
-        temperature: 温度参数
-        json_mode: JSON输出模式
-        max_retries: 最大重试次数
-        retry_delay: 重试间隔（秒）
-        timeout: 请求超时时间（秒）
-    Returns:
-        生成的回复
-    """
+    api_base = os.getenv("XIAOAI_API_BASE", "https://api.siliconflow.cn/v1/chat/completions")
+    api_key = os.getenv("XIAOAI_API_KEY")
+    
+    logger.info(f"开始API调用 - 模型: {model}")
+    logger.info(f"API基础URL: {api_base}")
+    logger.info(f"系统消息: {system_message}")
+    logger.info(f"温度参数: {temperature}")
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    last_error = None
     for attempt in range(max_retries):
         try:
+            # 计算当前重试的延迟时间
+            current_delay = exponential_backoff(attempt, retry_delay)
+            if attempt > 0:
+                logger.info(f"等待 {current_delay} 秒后重试...")
+                time.sleep(current_delay)
+            
+            logger.info(f"尝试API调用 ({attempt + 1}/{max_retries})")
+            
+            payload = {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": temperature,
+                "top_p": 1
+            }
+            
             if json_mode:
-                response = client.chat.completions.create(
-                    model=model,
-                    temperature=temperature,
-                    top_p=1,
-                    response_format={"type": "json_object"},
-                    messages=[
-                        {"role": "system", "content": system_message},
-                        {"role": "user", "content": prompt},
-                    ],
-                    timeout=timeout
-                )
-                return response.choices[0].message.content
-            else:
-                response = client.chat.completions.create(
-                    model=model,
-                    temperature=temperature,
-                    top_p=1,
-                    messages=[
-                        {"role": "system", "content": system_message},
-                        {"role": "user", "content": prompt},
-                    ],
-                    timeout=timeout
-                )
-                return response.choices[0].message.content
+                logger.info("使用JSON输出模式")
+                payload["response_format"] = {"type": "json_object"}
+            
+            logger.info(f"请求负载: {json.dumps(payload, ensure_ascii=False)[:200]}...")
+            
+            # 使用动态计算的超时时间
+            current_timeout = calculate_timeout(len(prompt))
+            logger.info(f"当前请求超时时间: {current_timeout}秒")
+            
+            response = requests.post(
+                api_base,
+                headers=headers,
+                json=payload,
+                timeout=current_timeout
+            )
+            
+            logger.info(f"API响应状态码: {response.status_code}")
+            logger.info(f"API响应内容: {response.text[:200]}...")
+            
+            if response.status_code != 200:
+                raise TranslationError(f"API调用失败，状态码: {response.status_code}, 响应: {response.text}")
+            
+            response_data = response.json()
+            if "choices" not in response_data or not response_data["choices"]:
+                raise TranslationError("API响应格式错误，未找到choices字段")
                 
+            logger.info("API调用成功")
+            return response_data["choices"][0]["message"]["content"]
+            
         except Exception as e:
-            if attempt < max_retries - 1:  # 如果还有重试机会
-                logger.warning(f"API调用失败 (尝试 {attempt + 1}/{max_retries}): {str(e)}")
-                logger.info(f"等待 {retry_delay} 秒后重试...")
-                time.sleep(retry_delay)
-                # 每次重试增加等待时间（指数退避）
-                retry_delay *= 1.5
-                continue
-            else:
-                logger.error(f"API调用失败，已重试{max_retries}次: {str(e)}")
-                raise TranslationError(f"API调用失败，已重试{max_retries}次: {str(e)}") from e
+            last_error = e
+            logger.error(f"API调用出错 (尝试 {attempt + 1}/{max_retries}): {str(e)}")
+            continue
+    
+    # 所有重试都失败后抛出最后一个错误
+    raise TranslationError(f"所有重试都失败: {str(last_error)}")
 
 
 def format_translation_prompt_with_terms(
@@ -144,35 +207,43 @@ def format_translation_prompt_with_terms(
     return prompt
 
 
-def one_chunk_initial_translation(
+async def one_chunk_initial_translation(
     source_lang: str,
     target_lang: str,
     source_text: str,
-    country: Optional[str] = None
+    country: Optional[str] = None,
+    model: str = "deepseek-v3"
 ) -> str:
     """
-    单块文本的初始翻译
-    Args:
-        source_lang: 源语言代码
-        target_lang: 目标语言代码
-        source_text: 待翻译文本
-        country: 可选的目标国家/地区
-    Returns:
-        str: 翻译结果
+    单块文本的初始翻译，使用指定的模型
     """
+    logger.info(f"开始初始翻译 - 从 {source_lang} 到 {target_lang}")
+    if country:
+        logger.info(f"目标地区: {country}")
+    logger.info(f"使用模型: {model}")
+    
     # 设置系统消息
     system_message = f"You are an expert linguist, specializing in translation from {source_lang} to {target_lang}."
+    logger.info("系统消息设置完成")
     
     # 生成带术语的翻译提示
+    logger.info("生成翻译提示...")
     prompt = format_translation_prompt_with_terms(
         source_lang,
         target_lang,
         source_text,
         country
     )
+    logger.info("翻译提示生成完成")
     
     # 获取翻译结果
-    translation = get_completion(prompt, system_message=system_message)
+    logger.info(f"调用 {model} 模型进行翻译...")
+    translation = await get_completion(
+        prompt, 
+        system_message=system_message,
+        model=model
+    )
+    logger.info("初始翻译完成")
     
     return translation
 
@@ -246,29 +317,28 @@ def format_reflection_prompt_with_terms(
     return prompt
 
 
-def one_chunk_reflect_on_translation(
+async def one_chunk_reflect_on_translation(
     source_lang: str,
     target_lang: str,
     source_text: str,
     translation_1: str,
-    country: Optional[str] = None
+    country: Optional[str] = None,
+    model: str = "deepseek-r1"
 ) -> str:
     """
-    对单块翻译进行反思
-    Args:
-        source_lang: 源语言代码
-        target_lang: 目标语言代码
-        source_text: 原文
-        translation_1: 初次翻译
-        country: 可选的目标国家/地区
-    Returns:
-        str: 反思结果
+    对单块文本的翻译进行反思，使用指定的模型
     """
+    logger.info(f"开始翻译反思 - 从 {source_lang} 到 {target_lang}")
+    if country:
+        logger.info(f"目标地区: {country}")
+    logger.info(f"使用模型: {model}")
+    
     # 设置系统消息
-    system_message = f"""You are an expert linguist specializing in translation from {source_lang} to {target_lang}.
-You will be provided with a source text and its translation and your goal is to improve the translation."""
+    system_message = f"You are an expert linguist and translation reviewer, specializing in {source_lang} to {target_lang} translation quality assessment."
+    logger.info("系统消息设置完成")
     
     # 生成带术语验证的反思提示
+    logger.info("生成反思提示...")
     prompt = format_reflection_prompt_with_terms(
         source_lang,
         target_lang,
@@ -276,9 +346,16 @@ You will be provided with a source text and its translation and your goal is to 
         translation_1,
         country
     )
+    logger.info("反思提示生成完成")
     
     # 获取反思结果
-    reflection = get_completion(prompt, system_message=system_message)
+    logger.info(f"调用 {model} 模型进行反思...")
+    reflection = await get_completion(
+        prompt, 
+        system_message=system_message,
+        model=model
+    )
+    logger.info("翻译反思完成")
     
     return reflection
 
@@ -298,7 +375,7 @@ def format_improvement_prompt_with_terms(
         target_lang: 目标语言代码
         source_text: 原文
         translation: 当前翻译
-        reflection: 翻译反思
+        reflection: 反思结果
         country: 可选的目标国家/地区
     Returns:
         str: 完整的改进提示
@@ -364,30 +441,29 @@ def format_improvement_prompt_with_terms(
     return prompt
 
 
-def one_chunk_improve_translation(
+async def one_chunk_improve_translation(
     source_lang: str,
     target_lang: str,
     source_text: str,
     translation_1: str,
     reflection: str,
-    country: Optional[str] = None
+    country: Optional[str] = None,
+    model: str = "deepseek-v3"
 ) -> str:
     """
-    改进单块翻译
-    Args:
-        source_lang: 源语言代码
-        target_lang: 目标语言代码
-        source_text: 原文
-        translation_1: 初次翻译
-        reflection: 翻译反思
-        country: 可选的目标国家/地区
-    Returns:
-        str: 改进后的翻译
+    根据反思改进单块文本的翻译，使用指定的模型
     """
-    # 设置系统消息
-    system_message = f"You are an expert linguist, specializing in translation editing from {source_lang} to {target_lang}."
+    logger.info(f"开始翻译改进 - 从 {source_lang} 到 {target_lang}")
+    if country:
+        logger.info(f"目标地区: {country}")
+    logger.info(f"使用模型: {model}")
     
-    # 生成带术语要求的改进提示
+    # 设置系统消息
+    system_message = f"You are an expert linguist, specializing in improving {source_lang} to {target_lang} translations based on professional review feedback."
+    logger.info("系统消息设置完成")
+    
+    # 生成改进提示
+    logger.info("生成改进提示...")
     prompt = format_improvement_prompt_with_terms(
         source_lang,
         target_lang,
@@ -396,60 +472,65 @@ def one_chunk_improve_translation(
         reflection,
         country
     )
+    logger.info("改进提示生成完成")
     
     # 获取改进后的翻译
-    translation_2 = get_completion(prompt, system_message=system_message)
+    logger.info(f"调用 {model} 模型进行改进...")
+    improved_translation = await get_completion(
+        prompt, 
+        system_message=system_message,
+        model=model
+    )
+    logger.info("翻译改进完成")
     
-    return translation_2
+    return improved_translation
 
 
 def one_chunk_translate_text(
     source_lang: str,    # 源语言
     target_lang: str,    # 目标语言
     source_text: str,    # 待翻译的文本
-    country: str = ""    # 目标语言所在国家（可选）
+    country: str = "",    # 目标语言所在国家（可选）
+    initial_model: str = "deepseek-v3",  # 初始翻译模型
+    reflection_model: str = "deepseek-r1",  # 翻译反思模型
+    improvement_model: str = "deepseek-v3",  # 翻译改进模型
+    timeout: float = 60.0  # 超时时间
 ) -> str:  # 返回最终的翻译结果
     """
     Translate a single chunk of text from the source language to the target language.
 
-    This function performs a two-step translation process:
-    1. Get an initial translation of the source text.
-    2. Reflect on the initial translation and generate an improved translation.
+    This function performs a three-step translation process:
+    1. Get an initial translation of the source text using initial_model.
+    2. Reflect on the initial translation using reflection_model.
+    3. Generate an improved translation based on the reflection using improvement_model.
 
     Args:
         source_lang (str): The source language of the text.
         target_lang (str): The target language for the translation.
         source_text (str): The text to be translated.
         country (str): Country specified for the target language.
+        initial_model (str): Model to use for initial translation.
+        reflection_model (str): Model to use for translation reflection.
+        improvement_model (str): Model to use for translation improvement.
+        timeout (float): Timeout for the translation process.
     Returns:
         str: The improved translation of the source text.
     """
-    #将单个文本块从源语言翻译成目标语言。
-    #该函数执行两步翻译过程：
-        #1. 获取源文本的初次翻译
-        #2. 对初次翻译进行反思并生成改进的翻译
-    #参数:
-        #source_lang (str): 源语言
-        #target_lang (str): 目标语言
-        #source_text (str): 待翻译的文本
-        #country (str): 目标语言所在国家
-    #返回:
-        #str: 源文本的改进翻译结果
-
 
     # 获取初次翻译
-    translation_1 = one_chunk_initial_translation(
-        source_lang, target_lang, source_text, country
-    )
+    translation_1 = asyncio.run(one_chunk_initial_translation(
+        source_lang, target_lang, source_text, country, model=initial_model
+    ))
 
     # 获取对初次翻译的反思
-    reflection = one_chunk_reflect_on_translation(
-        source_lang, target_lang, source_text, translation_1, country
-    )
+    reflection = asyncio.run(one_chunk_reflect_on_translation(
+        source_lang, target_lang, source_text, translation_1, country, model=reflection_model
+    ))
+
     # 基于反思改进翻译
-    translation_2 = one_chunk_improve_translation(
-        source_lang, target_lang, source_text, translation_1, reflection, country
-    )
+    translation_2 = asyncio.run(one_chunk_improve_translation(
+        source_lang, target_lang, source_text, translation_1, reflection, country, model=improvement_model
+    ))
 
     return translation_2
 
@@ -496,7 +577,8 @@ def num_tokens_in_string(
 def multichunk_initial_translation(
     source_lang: str,              # 源语言
     target_lang: str,              # 目标语言
-    source_text_chunks: List[str]  # 源文本块列表
+    source_text_chunks: List[str],  # 源文本块列表
+    model: str = "deepseek-v3"  # 指定模型
 ) -> List[str]:  # 返回翻译后的文本块列表
     """
     Translate a text in multiple chunks from the source language to the target language.
@@ -505,6 +587,7 @@ def multichunk_initial_translation(
         source_lang (str): The source language of the text.
         target_lang (str): The target language for translation.
         source_text_chunks (List[str]): A list of text chunks to be translated.
+        model (str): The model to use for translation.
 
     Returns:
         List[str]: A list of translated text chunks.
@@ -515,6 +598,7 @@ def multichunk_initial_translation(
         #source_lang (str): 源语言
         #target_lang (str): 目标语言
         #source_text_chunks (List[str]): 待翻译的文本块列表
+        #model (str): 使用的模型
     #返回:
         #List[str]: 翻译后的文本块列表
 
@@ -562,7 +646,7 @@ Output only the translation of the portion you are asked to translate, and nothi
         )
 
         # 获取翻译结果
-        translation = get_completion(prompt, system_message=system_message)
+        translation = asyncio.run(get_completion(prompt, system_message=system_message, model=model))
         translation_chunks.append(translation)
 
     return translation_chunks
@@ -698,7 +782,7 @@ Output only the suggestions and nothing else."""
             )
 
         # 获取反思结果
-        reflection = get_completion(prompt, system_message=system_message)
+        reflection = asyncio.run(get_completion(prompt, system_message=system_message))
         reflection_chunks.append(reflection)
 
     return reflection_chunks
@@ -801,193 +885,118 @@ Output only the new translation of the indicated part and nothing else."""
         )
 
         # 获取改进后的翻译
-        translation_2 = get_completion(prompt, system_message=system_message)
+        translation_2 = asyncio.run(get_completion(prompt, system_message=system_message))
         translation_2_chunks.append(translation_2)
 
     return translation_2_chunks
 
 
 def multichunk_translation(
-    source_lang,           # 源语言
-    target_lang,          # 目标语言
-    source_text_chunks,   # 源文本块列表
-    country: str = ""     # 目标语言所在国家（可选）
-):
-    """
-    Improves the translation of multiple text chunks based on the initial translation and reflection.
-
-    Args:
-        source_lang (str): The source language of the text chunks.
-        target_lang (str): The target language for translation.
-        source_text_chunks (List[str]): The list of source text chunks to be translated.
-        translation_1_chunks (List[str]): The list of initial translations for each source text chunk.
-        reflection_chunks (List[str]): The list of reflections on the initial translations.
-        country (str): Country specified for the target language
-    Returns:
-        List[str]: The list of improved translations for each source text chunk.
-    """
-
-    #基于初次翻译和反思改进多个文本块的翻译。
-    #参数:
-        #source_lang (str): 源语言
-        #target_lang (str): 目标语言
-        #source_text_chunks (List[str]): 待翻译的源文本块列表
-        #translation_1_chunks (List[str]): 每个源文本块的初次翻译列表
-        #reflection_chunks (List[str]): 对初次翻译的反思列表
-        #country (str): 目标语言使用的国家
-    
-
-    # 获取每个块的初次翻译
-    translation_1_chunks = multichunk_initial_translation(
-        source_lang, target_lang, source_text_chunks
-    )
-
-    # 获取对每个翻译块的反思
-    reflection_chunks = multichunk_reflect_on_translation(
-        source_lang,
-        target_lang,
-        source_text_chunks,
-        translation_1_chunks,
-        country,
-    )
-
-    # 基于反思改进每个翻译块
-    translation_2_chunks = multichunk_improve_translation(
-        source_lang,
-        target_lang,
-        source_text_chunks,
-        translation_1_chunks,
-        reflection_chunks,
-    )
-
-    return translation_2_chunks
-
-
-def calculate_chunk_size(
-    token_count: int,  # token总数
-    token_limit: int   # 每个块的token限制
-) -> int:  # 返回计算出的块大小
-    """
-    Calculate the chunk size based on the token count and token limit.
-
-    Args:
-        token_count (int): The total number of tokens.
-        token_limit (int): The maximum number of tokens allowed per chunk.
-
-    Returns:
-        int: The calculated chunk size.
-
-    Description:
-        This function calculates the chunk size based on the given token count and token limit.
-        If the token count is less than or equal to the token limit, the function returns the token count as the chunk size.
-        Otherwise, it calculates the number of chunks needed to accommodate all the tokens within the token limit.
-        The chunk size is determined by dividing the token limit by the number of chunks.
-        If there are remaining tokens after dividing the token count by the token limit,
-        the chunk size is adjusted by adding the remaining tokens divided by the number of chunks.
-
-    Example:
-        >>> calculate_chunk_size(1000, 500)
-        500
-        >>> calculate_chunk_size(1530, 500)
-        389
-        >>> calculate_chunk_size(2242, 500)
-        496
-    """
-
-    #基于token数量和token限制计算块大小。
-    #参数:
-        #token_count (int): token总数
-        #token_limit (int): 每个块允许的最大token数
-    #返回:
-        #int: 计算出的块大小
-    #说明:
-        #此函数基于给定的token总数和token限制计算块大小。
-        #如果token总数小于或等于token限制，函数返回token总数作为块大小。
-        #否则，它计算需要多少个块来容纳所有token，同时保持在token限制内。
-        #块大小通过将token限制除以块数来确定。
-        #如果在将token总数除以token限制后还有剩余token，
-        #块大小会通过将剩余token除以块数来调整。
-    #示例:
-        #>>> calculate_chunk_size(1000, 500)
-        #500
-        #>>> calculate_chunk_size(1530, 500)
-        #389
-        #>>> calculate_chunk_size(2242, 500)
-        #496
-
-
-
-
-    # 如果token总数小于限制，直接返回token总数
-    if token_count <= token_limit:
-        return token_count
-
-    # 计算需要的块数（向上取整）
-    num_chunks = (token_count + token_limit - 1) // token_limit
-    # 计算基本块大小
-    chunk_size = token_count // num_chunks
-
-    # 处理剩余的token
-    remaining_tokens = token_count % token_limit
-    if remaining_tokens > 0:
-        chunk_size += remaining_tokens // num_chunks
-
-    return chunk_size
+    source_lang: str,
+    target_lang: str,
+    source_text_chunks: List[str],
+    country: str,
+    model: str  # 新增模型参数
+) -> List[str]:
+    return [
+        one_chunk_translate_text(
+            source_lang, target_lang, chunk, country, model=model
+        )
+        for chunk in tqdm(source_text_chunks, desc="翻译进度")
+    ]
 
 
 def translate(
-    source_lang,    # 源语言
-    target_lang,    # 目标语言
-    source_text,    # 源文本
-    country,        # 目标语言所在国家
-    max_tokens=MAX_TOKENS_PER_CHUNK,  # 每个块的最大token数
-):
-    """Translate the source_text from source_lang to target_lang."""
-   # """翻译源文本从源语言到目标语言。"""
-
-
-
-    # 计算源文本的token数量
-    num_tokens_in_text = num_tokens_in_string(source_text)
-
-    ic(num_tokens_in_text)
-
-    # 如果token数量小于最大限制，作为单个块处理
-    if num_tokens_in_text < max_tokens:
-        ic("Translating text as a single chunk")
-
-        # 使用单块翻译函数处理
-        final_translation = one_chunk_translate_text(
-            source_lang, target_lang, source_text, country
+    source_lang: str,
+    target_lang: str,
+    source_text: str,
+    country: str,
+    model: str = "deepseek-v3",
+    max_tokens: Optional[int] = None
+) -> str:
+    """增强的翻译函数"""
+    # 使用配置类获取分块大小
+    chunk_size = chunk_config.get_chunk_size(model)
+    if max_tokens:
+        chunk_size = min(chunk_size, max_tokens)
+    
+    # 计算文本token数
+    num_tokens = num_tokens_in_string(source_text)
+    logger.info(f"源文本长度: {len(source_text)}字符，{num_tokens}个token")
+    
+    if len(source_text) <= chunk_size:
+        # 小文本直接翻译
+        timeout = chunk_config.get_timeout(model, len(source_text))
+        return one_chunk_translate_text(
+            source_lang, target_lang, source_text, country,
+            model=model, timeout=timeout
         )
-
-        return final_translation
-
-    else:
-        # 如果token数量超过限制，需要分块处理
-        ic("Translating text as multiple chunks")
-
-        # 计算合适的块大小
-        token_size = calculate_chunk_size(
-            token_count=num_tokens_in_text, token_limit=max_tokens
+    
+    # 大文本分块处理
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        model_name=model.split('/')[-1],
+        chunk_size=chunk_size,
+        chunk_overlap=int(chunk_size * 0.1)  # 10%重叠
+    )
+    
+    chunks = text_splitter.split_text(source_text)
+    logger.info(f"文本已分割为{len(chunks)}块，每块约{chunk_size}字符")
+    
+    translated_chunks = []
+    for i, chunk in enumerate(chunks, 1):
+        timeout = chunk_config.get_timeout(model, len(chunk))
+        logger.info(f"翻译第{i}/{len(chunks)}块，超时设置: {timeout}秒")
+        
+        translation = one_chunk_translate_text(
+            source_lang, target_lang, chunk, country,
+            model=model, timeout=timeout
         )
+        translated_chunks.append(translation)
+    
+    return "".join(translated_chunks)
 
-        ic(token_size)
 
-        # 创建文本分割器
-        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-            model_name="gpt-4",
-            chunk_size=token_size,
-            chunk_overlap=0,
+def generate_translation(prompt, system_prompt, model="deepseek-v3"):
+    """生成翻译的核心函数"""
+    try:
+        # 增强调试信息
+        logger.debug(f"【API请求详情】\n模型: {model}\n系统提示: {system_prompt[:200]}...\n用户提示: {prompt[:200]}...")
+        logger.debug(f"API端点: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions")
+        logger.debug(f"API密钥: sk-96ddff88a51f40cda3af8a5ae70b8d9a")
+        
+        start_time = time.time()
+        response = requests.post(
+            "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+            headers={"Authorization": f"Bearer sk-96ddff88a51f40cda3af8a5ae70b8d9a"},
+            json={
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.3
+            }
         )
-
-        # 将源文本分割成多个块
-        source_text_chunks = text_splitter.split_text(source_text)
-
-        # 使用多块翻译函数处理
-        translation_2_chunks = multichunk_translation(
-            source_lang, target_lang, source_text_chunks, country
-        )
-
-        # 合并所有翻译块并返回
-        return "".join(translation_2_chunks)
+        latency = time.time() - start_time
+        
+        # 记录完整响应头信息
+        logger.debug(f"【API响应】状态码: {response.status_code} 延迟: {latency:.2f}s")
+        logger.debug(f"响应头: {dict(response.headers)}")
+        
+        # 成功响应处理
+        if response.status_code == 200:
+            response_data = response.json()
+            logger.debug(f"完整响应体: {json.dumps(response_data, ensure_ascii=False)[:500]}...")
+            logger.info(f"API调用成功 - 使用模型: {model} 消耗token: {response_data.get('usage', {}).get('total_tokens', '未知')}")
+            return response_data["choices"][0]["message"]["content"]
+        
+        # 错误响应处理
+        logger.error(f"API错误响应: {response.text}")
+        logger.error(f"请求详情:\nURL: {response.request.url}\nMethod: {response.request.method}\nBody: {response.request.body[:300]}...")
+        
+        raise TranslationError(f"API返回错误状态码: {response.status_code}")
+        
+    except Exception as e:
+        logger.error("【API调用异常】", exc_info=True)
+        logger.error(f"最后请求信息:\nURL: {response.request.url if 'response' in locals() else 'N/A'}\nMethod: {response.request.method if 'response' in locals() else 'N/A'}")
+        raise TranslationError("翻译服务暂时不可用") from e

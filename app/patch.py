@@ -5,6 +5,9 @@ from functools import wraps  # 用于装饰器功能，保持函数元数据
 from threading import Lock  # 用于线程同步，确保并发安全
 from typing import Optional, Union  # 类型提示，用于静态类型检查
 import logging  # 导入日志模块
+from datetime import datetime
+import asyncio
+import requests
 
 # 配置日志记录
 logging.basicConfig(
@@ -16,6 +19,8 @@ logger = logging.getLogger(__name__)
 # 导入第三方依赖库
 import openai  # OpenAI API客户端，用于与各种LLM服务通信
 import translation_agent.utils as utils  # 导入项目的核心工具函数模块
+import httpx  # 用于HTTP客户端的增强功能
+from openai import OpenAI
 
 # 定义全局配置常量，这些常量会影响整个翻译系统的行为
 RPM = 60  # 每分钟最大请求次数（Rate Per Minute），用于API调用频率限制
@@ -25,67 +30,94 @@ TEMPERATURE = 0.3  # 模型输出的随机性参数，越低越确定性，越�
 JS_MODE = False  # JSON输出模式开关，控制API返回格式
 ENDPOINT = ""  # 当前使用的API端点，用于选择不同的LLM服务提供商
 
+# 在文件顶部添加模型注册表
+model_registry = {}
+
+# 初始化OpenAI客户端
+client = OpenAI(
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    timeout=60.0,
+    http_client=httpx.Client(
+        proxies="http://127.0.0.1:7897",  # 明确指定代理
+        transport=httpx.HTTPTransport(
+            retries=3,
+            verify=os.getenv("SSL_VERIFY", True),  # 允许通过环境变量控制证书验证
+            cert=os.getenv("SSL_CLIENT_CERT"),     # 客户端证书路径
+            trust_env=False  # 禁用环境变量代理，使用显式配置
+        ),
+        limits=httpx.Limits(
+            max_connections=100,
+            max_keepalive_connections=20
+        )
+    )
+)
+
 class TranslationError(Exception):
     """翻译过程中的自定义异常类"""
     pass
 
-def model_load(
-    endpoint: str,  # API服务提供商标识，如"OpenAI"、"Groq"等
-    base_url: str,  # API基础URL地址，用于自定义端点
-    model: str,  # 具体的模型名称，如"gpt-4-turbo"
-    api_key: Optional[str] = None,  # API访问密钥，可选参数
-    temperature: float = TEMPERATURE,  # 模型输出随机性参数
-    rpm: int = RPM,  # 每分钟最大请求次数限制
-    js_mode: bool = JS_MODE,  # JSON输出模式开关
-):
-    """
-    初始化并加载指定的语言模型
+class APIMonitor:
+    def __init__(self):
+        self.metrics = {
+            'total_requests': 0,
+            'successful_chunks': 0,
+            'failed_chunks': 0,
+            'average_speed': 0.0,
+            'max_chunk_size': 0,
+            'timeout_events': 0
+        }
     
-    该函数负责配置和初始化与不同LLM提供商的连接。支持多个主流服务商，
-    包括OpenAI、Groq、TogetherAI等，也支持自定义API端点。
-    
-    函数会根据提供的参数更新全局配置，并初始化相应的API客户端。
-    """
-    # 声明要使用的全局变量
-    global client, RPM, MODEL, TEMPERATURE, JS_MODE, ENDPOINT
-    
-    # 更新全局配置
-    ENDPOINT = endpoint  # 设置当前使用的API端点
-    RPM = rpm  # 更新API请求频率限制
-    MODEL = model  # 设置当前使用的模型
-    TEMPERATURE = temperature  # 设置模型温度参数
-    JS_MODE = js_mode  # 设置JSON模式状态
+    def record_request(self, chunk_size: int, success: bool, duration: float):
+        """记录请求指标"""
+        self.metrics['total_requests'] += 1
+        if success:
+            speed = chunk_size / duration if duration > 0 else 0
+            self.metrics['successful_chunks'] += 1
+            self.metrics['average_speed'] = (
+                (self.metrics['average_speed'] * (self.metrics['successful_chunks']-1) + speed) 
+                / self.metrics['successful_chunks']
+            )
+            self.metrics['max_chunk_size'] = max(self.metrics['max_chunk_size'], chunk_size)
+        else:
+            self.metrics['failed_chunks'] += 1
+            self.metrics['timeout_events'] += 1
 
-    # 根据不同的API提供商配置对应的客户端
-    match endpoint:
-        case "XiaoAI":  # 添加小爱API支持
-            client = openai.OpenAI(
-                api_key=api_key if api_key else os.getenv("XIAOAI_API_KEY"),
-                base_url=os.getenv("XIAOAI_API_BASE", "https://xiaoai.plus/v1"),
-            )
-        case "OpenAI":  # OpenAI官方API配置
-            client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # 使用环境变量中的API密钥
-        case "Groq":  # Groq高性能推理服务配置
-            client = openai.OpenAI(
-                api_key=api_key if api_key else os.getenv("GROQ_API_KEY"),  # 优先使用传入的API密钥
-                base_url="https://api.groq.com/openai/v1",  # Groq的API端点
-            )
-        case "TogetherAI":  # TogetherAI开源模型平台配置
-            client = openai.OpenAI(
-                api_key=api_key if api_key else os.getenv("TOGETHER_API_KEY"),
-                base_url="https://api.together.xyz/v1",  # TogetherAI的API端点
-            )
-        case "CUSTOM":  # 自定义API端点配置
-            client = openai.OpenAI(api_key=api_key, base_url=base_url)  # 使用自定义的URL和密钥
-        case "Ollama":  # Ollama本地部署模型配置
-            client = openai.OpenAI(
-                api_key="ollama",  # Ollama使用固定的API密钥
-                base_url="http://localhost:11434/v1"  # Ollama本地服务地址
-            )
-        case _:  # 默认使用OpenAI配置
-            client = openai.OpenAI(
-                api_key=api_key if api_key else os.getenv("OPENAI_API_KEY")
-            )
+api_monitor = APIMonitor()
+
+def model_load(endpoint: str, base_url: str, model: str, **kwargs):
+    """增强的模型加载函数"""
+    global client
+    
+    # 根据模型类型配置客户端
+    if "DeepSeek" in model:
+        # 配置超时和重试
+        timeout_config = httpx.Timeout(
+            connect=30.0,  # 连接超时
+            read=180.0,    # 读取超时
+            write=30.0,    # 写入超时
+            pool=300.0     # 连接池超时
+        )
+        
+        client = openai.OpenAI(
+            api_key=kwargs.get('api_key', os.getenv("DASHSCOPE_API_KEY")),
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+            timeout=timeout_config,
+            max_retries=3
+        )
+        
+        # 记录模型加载信息
+        logger.info(f"模型 {model} 加载成功")
+        logger.debug(f"客户端配置: 超时={timeout_config}, 最大重试次数=3")
+        
+        # 更新模型注册表
+        model_registry[model] = {
+            "status": "loaded",
+            "endpoint": endpoint,
+            "base_url": base_url,
+            "load_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "timeout_config": str(timeout_config)
+        }
 
 def rate_limit(get_max_per_minute):
     """
@@ -121,7 +153,7 @@ def rate_limit(get_max_per_minute):
         return wrapper  # 返回包装后的函数
     return decorator  # 返回装饰器函数
 
-def retry_on_error(initial_delay=1, backoff_factor=2):
+def retry_on_error(initial_delay=5, backoff_factor=2):
     """
     装饰器：为函数添加无限重试机制
     
@@ -151,58 +183,43 @@ def retry_on_error(initial_delay=1, backoff_factor=2):
         return wrapper
     return decorator
 
-@retry_on_error(initial_delay=1, backoff_factor=2)
-def get_completion(
+@retry_on_error(initial_delay=5, backoff_factor=2)
+async def get_completion_with_retry(
     prompt: str,
-    system_message: str = "You are a helpful assistant.",
-    model: str = "gpt-4-turbo",
+    system_message: str,
+    model: str,
     temperature: float = 0.3,
-    json_mode: bool = False,
-    timeout: float = 60.0,
-) -> Union[str, dict]:
-    """
-    使用OpenAI API生成补全，包含无限重试机制
-    
-    Args:
-        prompt: 用户提示
-        system_message: 系统消息
-        model: 模型名称
-        temperature: 温度参数
-        json_mode: JSON输出模式
-        timeout: 请求超时时间（秒）
-    Returns:
-        生成的回复
-    """
+    timeout: float = 120.0
+):
+    """带有增强重试机制的完成请求函数"""
     try:
-        if json_mode:
-            response = client.chat.completions.create(
-                model=model,
-                temperature=temperature,
-                response_format={"type": "json_object"},
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": prompt},
-                ],
-                timeout=timeout
-            )
-        else:
-            response = client.chat.completions.create(
-                model=model,
-                temperature=temperature,
-                messages=[
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": prompt},
-                ],
-                timeout=timeout
-            )
+        # 记录请求开始
+        logger.info(f"开始API请求 - 模型: {model}")
+        logger.debug(f"请求参数: temperature={temperature}, timeout={timeout}")
+
+        # 发送请求
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=temperature,
+            stream=False
+        )
+
+        # 记录成功响应
+        logger.info(f"API请求成功 - 模型: {model}")
         return response.choices[0].message.content
-                
-    except Exception as e:
-        logger.error(f"API调用失败: {str(e)}")
-        raise TranslationError(f"API调用失败: {str(e)}") from e
+
+    except openai.APIConnectionError as e:
+        error_msg = f"SSL连接失败: {str(e.__cause__)}"
+        logger.error(error_msg)
+        logger.error("建议检查：\n1. 本地代理设置\n2. 防火墙配置\n3. SSL证书有效性")
+        raise TranslationError(error_msg) from e
 
 # 将当前模块的API调用函数注入到utils模块中，使其可以使用相同的API调用功能
-utils.get_completion = get_completion
+utils.get_completion = get_completion_with_retry
 
 # 从utils模块导入所有翻译相关的功能函数，并提供中文注释说明其用途
 one_chunk_initial_translation = utils.one_chunk_initial_translation  # 单块文本初始翻译函数
@@ -215,3 +232,70 @@ multichunk_reflect_on_translation = utils.multichunk_reflect_on_translation  # �
 multichunk_improve_translation = utils.multichunk_improve_translation  # 多块文本翻译改进函数
 multichunk_translation = utils.multichunk_translation  # 多块文本完整翻译流程函数
 calculate_chunk_size = utils.calculate_chunk_size  # 计算最优文本分块大小的函数
+
+def api_call_with_retry(func):
+    """增强的重试装饰器"""
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        max_retries = 5  # 增加最大重试次数
+        base_delay = 1.5  # 调整基础延迟时间
+        timeout_config = {
+            1: 60.0,  # 第一次超时
+            2: 120.0, # 第二次延长
+            3: 180.0  # 最大超时时间
+        }
+        
+        for attempt in range(1, max_retries+1):
+            try:
+                # 动态调整超时时间
+                current_timeout = timeout_config.get(attempt, 180.0)
+                kwargs["timeout"] = current_timeout
+                
+                logger.debug(f"第{attempt}次尝试，超时设置为{current_timeout}s")
+                return await func(*args, **kwargs)
+            except httpx.ReadTimeout as e:
+                if attempt == max_retries:
+                    logger.error(f"达到最大重试次数{max_retries}次")
+                    raise
+                delay = base_delay * (2 ** attempt)
+                logger.warning(f"请求超时，{delay}秒后重试...")
+                await asyncio.sleep(delay)
+            except httpx.ConnectError as e:
+                logger.error("网络连接异常，建议检查：\n1. 本地网络连接\n2. 防火墙设置\n3. 代理配置")
+                raise
+    return wrapper
+
+class ChunkConfig:
+    """分块配置管理类"""
+    def __init__(self):
+        self.size_mapping = {
+            "Pro/deepseek-ai/DeepSeek-V3": 5000,  # 增加到5000字符
+            "Pro/deepseek-ai/DeepSeek-R1": 5000,  # 增加到5000字符
+            "gpt-4": 5000  # 其他模型也相应调整
+        }
+        
+        # 模型超时配置（秒）
+        self.timeout_mapping = {
+            "Pro/deepseek-ai/DeepSeek-V3": {
+                "base": 120,
+                "per_1k_chars": 20  # 每1000字符增加20秒
+            },
+            "Pro/deepseek-ai/DeepSeek-R1": {
+                "base": 180,
+                "per_1k_chars": 30  # 推理模型需要更多时间
+            }
+        }
+    
+    def get_chunk_size(self, model: str) -> int:
+        """获取指定模型的分块大小"""
+        return self.size_mapping.get(model, 3000)  # 默认3000字符
+    
+    def get_timeout(self, model: str, text_length: int) -> float:
+        """计算动态超时时间"""
+        config = self.timeout_mapping.get(model, {
+            "base": 120,
+            "per_1k_chars": 20
+        })
+        return config["base"] + (text_length / 1000) * config["per_1k_chars"]
+
+chunk_config = ChunkConfig()
