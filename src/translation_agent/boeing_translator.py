@@ -28,6 +28,7 @@ from openai import OpenAI
 from openai import AsyncOpenAI
 import re
 from dotenv import load_dotenv
+import httpx
 
 # 加载环境变量
 load_dotenv()
@@ -43,25 +44,54 @@ logger.addHandler(console_handler)
 class DeepSeekClient:
     """DeepSeek模型客户端，支持同步和异步操作"""
     def __init__(self, api_key: str = None, base_url: str = None):
+        """初始化 DeepSeek 客户端
+        
+        Args:
+            api_key: API密钥,如果未提供则从环境变量DASHSCOPE_API_KEY获取
+            base_url: API基础URL,如果未提供则使用默认值
+        """
+        # 获取API密钥
         self.api_key = api_key or os.getenv("DASHSCOPE_API_KEY")
         if not self.api_key:
             raise ValueError("请提供API密钥或在环境变量中设置DASHSCOPE_API_KEY")
             
+        # 设置基础URL
         self.base_url = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
         
-        # 同步客户端
+        # 配置同步客户端
         self.sync_client = OpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
-            max_retries=5,
-            timeout=300.0
+            timeout=300.0,  # 设置超时时间
+            http_client=httpx.Client(
+                proxies="http://127.0.0.1:7897",  # 设置代理
+                transport=httpx.HTTPTransport(
+                    retries=3,  # 设置重试次数
+                    verify=True  # 启用SSL验证
+                ),
+                limits=httpx.Limits(
+                    max_connections=100,
+                    max_keepalive_connections=20
+                )
+            )
         )
         
-        # 异步客户端
+        # 配置异步客户端
         self.async_client = AsyncOpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
-            timeout=300.0
+            timeout=300.0,  # 设置超时时间
+            http_client=httpx.AsyncClient(
+                proxies="http://127.0.0.1:7897",  # 设置代理
+                transport=httpx.AsyncHTTPTransport(
+                    retries=3,  # 设置重试次数
+                    verify=True  # 启用SSL验证
+                ),
+                limits=httpx.Limits(
+                    max_connections=100,
+                    max_keepalive_connections=20
+                )
+            )
         )
         
         # 模型配置

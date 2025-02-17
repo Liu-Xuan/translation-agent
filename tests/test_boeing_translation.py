@@ -12,9 +12,9 @@ import json
 import time
 from datetime import datetime
 import asyncio
-from openai import OpenAI
-from openai import AsyncOpenAI
+import openai
 import re
+from openai import OpenAI, AsyncOpenAI
 
 # 加载环境变量
 load_dotenv()
@@ -61,25 +61,22 @@ def load_and_filter_terms(source_text: str) -> list:
 class DeepSeekClient:
     """DeepSeek模型客户端，支持同步和异步操作"""
     def __init__(self):
-        api_key = os.getenv("DASHSCOPE_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("DASHSCOPE_API_KEY")
+        if not self.api_key:
             raise ValueError("请在.env文件中设置DASHSCOPE_API_KEY环境变量")
             
-        base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        self.base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
         
         # 同步客户端
         self.sync_client = OpenAI(
-            api_key=api_key,
-            base_url=base_url,
-            max_retries=5,
-            timeout=300.0  # 增加到5分钟
+            api_key=self.api_key,
+            base_url=self.base_url
         )
         
         # 异步客户端
         self.async_client = AsyncOpenAI(
-            api_key=api_key,
-            base_url=base_url,
-            timeout=300.0  # 增加到5分钟
+            api_key=self.api_key,
+            base_url=self.base_url
         )
         
         # 模型配置
@@ -214,8 +211,8 @@ async def translate_document(client: DeepSeekClient, text: str, model: str, used
     """
     logger.info("开始翻译文档...")
     
-    prompt = "请将以下英文文本翻译成中文。\n"
-    prompt += "保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。\n\n"
+    prompt = "作为资深民航维修工程师，请将以下英文文本翻译成中文。请在对全文理解的基础上进行翻译。\n"
+    prompt += "保持原文的格式和标点符号。如有HTML标签或Markdown标记，请保留不变。祛除多余的# FLEET TEAM DIGEST标题，只保留文档最开始的一个。 \n\n"
     
     if used_terms:
         prompt += "## 术语表要求：\n"
@@ -229,6 +226,8 @@ async def translate_document(client: DeepSeekClient, text: str, model: str, used
         prompt += "2. 保持术语的一致性\n"
         prompt += "3. 注意术语的上下文含义\n"
         prompt += "4. 保留术语的专业性\n\n"
+        prompt += "5. 不允许任意偏离、变更术语表中的术语\n\n"
+        prompt += "6. 不允许偏离原文表述的信息，不允许增删信息内容！\n\n"
     
     prompt += f"源文本：\n{text}"
     
@@ -252,19 +251,37 @@ async def reflect_on_translation(client: DeepSeekClient, source: str, translatio
    - 术语翻译的一致性
    - 术语上下文的适当性
    - 专业术语的规范性
-
+   - 不允许任意偏离、变更术语表中的术语
+   
 2. 翻译质量：
-   - 内容的完整性
+   - 作为资深民航维修工程师，对文章整体内容进行理解，评估翻译质量
+   - 内容的完整性（祛除多余的# FLEET TEAM DIGEST标题，只保留文档最开始的一个。）
    - 含义的准确性
    - 表达的自然度
    - 语言的流畅度
+   - 不允许偏离原文表述的信息，不允许增删信息内容！
+
 
 3. 格式规范：
    - 格式标记的保留
    - 标点符号的正确性
    - 特殊标记的处理
-   - 排版的一致性
-
+   - 排版的一致性（注意理解每段内容，以及合适的标题排版，对不合理的排版进行调整）
+   - FTD 文档的段落标题一般包括以下内容（请根据实际情况进行调整）：
+        - Issue Title
+        - Background
+        - Applicability
+        - Description
+        - Status
+        - Interim Action
+        - Final Action
+        - Operator Action
+        - Milestone
+        - Attachments
+        - References
+        - Parts List
+        - Related Categories
+        
 原文：
 {source}
 
