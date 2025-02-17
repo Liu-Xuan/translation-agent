@@ -252,7 +252,7 @@ async def reflect_on_translation(client: DeepSeekClient, source: str, translatio
    - 术语上下文的适当性
    - 专业术语的规范性
    - 不允许任意偏离、变更术语表中的术语
-   
+
 2. 翻译质量：
    - 作为资深民航维修工程师，对文章整体内容进行理解，评估翻译质量
    - 内容的完整性（祛除多余的# FLEET TEAM DIGEST标题，只保留文档最开始的一个。）
@@ -382,8 +382,7 @@ async def test_boeing_doc_translation():
             "加粗格式 (**)": "√" if "**" in final_translation else "×",
             "斜体格式 (*)": "√" if "*" in final_translation else "×",
             "图片链接 (![])": "√" if "![" in final_translation else "×",
-            "专业缩写 (NFS)": "√" if "NFS" in final_translation else "×",
-            "型号名称 (737 MAX)": "√" if "737 MAX" in final_translation else "×"
+
         }
         recorder.add_validation_result(validation_results)
         

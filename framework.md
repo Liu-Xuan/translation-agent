@@ -339,3 +339,170 @@ def handle_api_error(error):
     else:
         raise APIError(str(error))
 ``` 
+
+# 系统框架设计
+
+## 2024-02-17 15:30:00
+### 文档分析评估系统
+
+#### 1. 核心组件
+1. **分析客户端 (DeepSeekClient)**
+   - 支持同步和异步操作
+   - 模型配置管理
+   - 流式输出处理
+
+2. **记录器 (AnalysisRecorder)**
+   - 分析过程记录
+   - 结果输出格式化
+   - 术语统计分析
+
+3. **分析引擎**
+   - 文档结构分析 (V3模型)
+   - 内容深度分析 (R1模型)
+   - 综合报告生成 (V3模型)
+
+#### 2. 分析流程
+1. **第一阶段：结构分析**
+   - 章节识别和分解
+   - 逻辑关系分析
+   - 结构完整性评估
+
+2. **第二阶段：内容分析**
+   - 技术内容评估
+   - 专业术语分析
+   - 实施可行性评估
+   - 资源需求分析
+
+3. **第三阶段：综合评估**
+   - 质量评估
+   - 改进建议
+   - 资源规划
+   - 风险管理
+
+#### 3. 输出内容
+1. **分析报告**
+   - 执行摘要
+   - 详细发现
+   - 建议措施
+   - 资源计划
+   - 风险管理计划
+
+2. **术语分析**
+   - 技术术语统计
+   - 流程术语统计
+   - 使用频率分析
+
+3. **资源评估**
+   - 人力资源需求
+   - 技术资源需求
+   - 时间成本估算
+   - 培训需求分析
+
+#### 4. 质量保证
+1. **分析准确性**
+   - 多模型交叉验证
+   - 专业术语准确性
+   - 逻辑一致性检查
+
+2. **输出规范性**
+   - 结构化报告格式
+   - 清晰的评估结论
+   - 可操作的建议
+
+3. **异常处理**
+   - 错误日志记录
+   - 异常恢复机制
+   - 完整的错误追踪 
+
+## [2025-02-17 16:30:00] API连接架构优化
+
+### 1. API客户端架构
+```python
+class DeepSeekClient:
+    def __init__(self):
+        self.base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        self.model_configs = {
+            "deepseek-r1": {
+                "temperature": 0.3,
+                "max_tokens": 4000,
+                # 其他参数...
+            },
+            "deepseek-v3": {
+                "temperature": 0.7,
+                "max_tokens": 4000,
+                # 其他参数...
+            }
+        }
+```
+
+### 2. 重试机制
+```python
+class RetryStrategy:
+    """重试策略配置"""
+    MAX_RETRIES = 3
+    BASE_DELAY = 2  # 秒
+    RANDOM_OFFSET = 0.1  # 秒
+    
+    @staticmethod
+    def calculate_delay(retry_count):
+        return (2 ** retry_count) + (random.random() * 0.1)
+```
+
+### 3. 错误处理流程
+```python
+async def handle_api_request(func):
+    """API请求处理装饰器"""
+    retry_count = 0
+    while retry_count < RetryStrategy.MAX_RETRIES:
+        try:
+            return await func()
+        except Exception as e:
+            retry_count += 1
+            if retry_count == RetryStrategy.MAX_RETRIES:
+                raise
+            delay = RetryStrategy.calculate_delay(retry_count)
+            logger.warning(f"请求失败，第{retry_count}次重试")
+            await asyncio.sleep(delay)
+```
+
+### 4. 日志系统
+```python
+logging_config = {
+    "version": 1,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "detailed"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "api.log",
+            "formatter": "detailed"
+        }
+    },
+    "formatters": {
+        "detailed": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
+    }
+}
+```
+
+### 5. 系统集成
+1. API调用流程
+   - 请求预处理
+   - 重试机制
+   - 错误处理
+   - 结果验证
+
+2. 数据流
+   - 输入验证
+   - 分块处理
+   - 结果合并
+   - 格式化输出
+
+3. 监控体系
+   - 性能监控
+   - 错误追踪
+   - 状态记录
+   - 资源管理 
