@@ -1,0 +1,4630 @@
+{
+    "pdf_info": [
+        {
+            "preproc_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        18,
+                        451,
+                        42
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                22,
+                                449,
+                                39
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        22,
+                                        449,
+                                        39
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        228,
+                        74,
+                        382,
+                        90
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                230,
+                                76,
+                                381,
+                                89
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        230,
+                                        76,
+                                        381,
+                                        89
+                                    ],
+                                    "score": 1.0,
+                                    "content": "737MAX-FTD-31-23004",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        }
+                    ],
+                    "index": 1
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        99,
+                        241,
+                        112
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                100,
+                                239,
+                                113
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        100,
+                                        239,
+                                        113
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Issue Title : Takeoff Alert Inhibit Option",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "type": "table",
+                    "bbox": [
+                        68,
+                        125,
+                        558,
+                        304
+                    ],
+                    "blocks": [
+                        {
+                            "type": "table_body",
+                            "bbox": [
+                                68,
+                                125,
+                                558,
+                                304
+                            ],
+                            "group_id": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        304
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                68,
+                                                125,
+                                                558,
+                                                304
+                                            ],
+                                            "score": 0.711,
+                                            "type": "table",
+                                            "image_path": "8485828948872f601eab09dbe10a50dd469392a2cea91ec8cf88049546d78d1c.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 4,
+                            "virtual_lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        184.66666666666666
+                                    ],
+                                    "spans": [],
+                                    "index": 3
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        184.66666666666666,
+                                        558,
+                                        244.33333333333331
+                                    ],
+                                    "spans": [],
+                                    "index": 4
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        244.33333333333331,
+                                        558,
+                                        304.0
+                                    ],
+                                    "spans": [],
+                                    "index": 5
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        335,
+                        154,
+                        347
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                54,
+                                335,
+                                154,
+                                347
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        335,
+                                        154,
+                                        347
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Revision Description",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        351,
+                        241,
+                        363
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                352,
+                                239,
+                                363
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        352,
+                                        239,
+                                        363
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Updated Optional Service Bulletin ECD.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        }
+                    ],
+                    "index": 7
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        411,
+                        113,
+                        423
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                52,
+                                411,
+                                114,
+                                424
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        52,
+                                        411,
+                                        114,
+                                        424
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Applicability",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 8
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        427,
+                        164,
+                        440
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                428,
+                                163,
+                                440
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        428,
+                                        163,
+                                        440
+                                    ],
+                                    "score": 1.0,
+                                    "content": "All 737MAX Airplanes.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        }
+                    ],
+                    "index": 9
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        488,
+                        109,
+                        499
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                53,
+                                488,
+                                111,
+                                500
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        488,
+                                        111,
+                                        500
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Description",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 10
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        503,
+                        482,
+                        528
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                504,
+                                480,
+                                518
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        504,
+                                        480,
+                                        518
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing has determined that there is an issue with Option Selection Software (OSS) parameter",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                516,
+                                205,
+                                530
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        516,
+                                        205,
+                                        530
+                                    ],
+                                    "score": 1.0,
+                                    "content": " OSS_TO_ALERT_INH_800FT.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12
+                        }
+                    ],
+                    "index": 11.5
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        573,
+                        554,
+                        590
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                55,
+                                577,
+                                114,
+                                590
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        55,
+                                        577,
+                                        114,
+                                        590
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Background",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13
+                        }
+                    ],
+                    "index": 13
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        592,
+                        557,
+                        653
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                592,
+                                553,
+                                607
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        592,
+                                        553,
+                                        607
+                                    ],
+                                    "score": 1.0,
+                                    "content": "The Takeoff Alert Inhibit is designed to inhibit the blinking for Engine Alert Messages as described in the Flight",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                604,
+                                527,
+                                619
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        604,
+                                        527,
+                                        619
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Crew Operations Manual (FCOM) Chapter 7 (Engines, APU), Section 10 (Controls and Indicators: Crew",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                617,
+                                556,
+                                630
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        617,
+                                        556,
+                                        630
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Alerts). The Inhibit feature is designed to minimize pilot distractions from 80 knots (kts) up to 400 feet (ft) Radio",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                629,
+                                542,
+                                642
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        629,
+                                        542,
+                                        642
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Altitude (RA) by disabling the OSS parameter above and inhibiting blinking up to 400 ft RA. However, it was",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                642,
+                                482,
+                                653
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        642,
+                                        482,
+                                        653
+                                    ],
+                                    "score": 1.0,
+                                    "content": "determined that the parameter was inverted such that the Inhibit is enabled through 800 ft RA.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 16
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        63,
+                        705,
+                        88,
+                        716
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                703,
+                                90,
+                                717
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        703,
+                                        90,
+                                        717
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Note:",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        }
+                    ],
+                    "index": 19
+                }
+            ],
+            "layout_bboxes": [],
+            "page_idx": 0,
+            "page_size": [
+                612.0,
+                792.0
+            ],
+            "_layout_tree": [],
+            "images": [],
+            "tables": [
+                {
+                    "type": "table",
+                    "bbox": [
+                        68,
+                        125,
+                        558,
+                        304
+                    ],
+                    "blocks": [
+                        {
+                            "type": "table_body",
+                            "bbox": [
+                                68,
+                                125,
+                                558,
+                                304
+                            ],
+                            "group_id": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        304
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                68,
+                                                125,
+                                                558,
+                                                304
+                                            ],
+                                            "score": 0.711,
+                                            "type": "table",
+                                            "image_path": "8485828948872f601eab09dbe10a50dd469392a2cea91ec8cf88049546d78d1c.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 4,
+                            "virtual_lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        184.66666666666666
+                                    ],
+                                    "spans": [],
+                                    "index": 3
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        184.66666666666666,
+                                        558,
+                                        244.33333333333331
+                                    ],
+                                    "spans": [],
+                                    "index": 4
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        244.33333333333331,
+                                        558,
+                                        304.0
+                                    ],
+                                    "spans": [],
+                                    "index": 5
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4
+                }
+            ],
+            "interline_equations": [],
+            "discarded_blocks": [
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        71,
+                        15,
+                        159,
+                        36
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                96,
+                                19,
+                                158,
+                                29
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        96,
+                                        19,
+                                        158,
+                                        29
+                                    ],
+                                    "score": 0.9403620362281799,
+                                    "content": "BOEING",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        302,
+                        749,
+                        308,
+                        758
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                302,
+                                750,
+                                309,
+                                759
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        302,
+                                        750,
+                                        309,
+                                        759
+                                    ],
+                                    "score": 1.0,
+                                    "content": "1",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        52,
+                        719,
+                        547,
+                        748
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                51,
+                                718,
+                                546,
+                                732
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        51,
+                                        718,
+                                        546,
+                                        732
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Disclaimer: This document contains BOEING PROPRIETARY information, Encrypted emails required for forwarding via Email. Document",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                54,
+                                729,
+                                545,
+                                740
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        729,
+                                        545,
+                                        740
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Generated on 09/20/2023 by Fleet Team Digest, this document is only for reference purpose, visit the application for all latest and updated",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                53,
+                                739,
+                                158,
+                                749
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        739,
+                                        158,
+                                        749
+                                    ],
+                                    "score": 1.0,
+                                    "content": "revisions of this digest article.",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "need_drop": false,
+            "drop_reason": [],
+            "para_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        18,
+                        451,
+                        42
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                22,
+                                449,
+                                39
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        22,
+                                        449,
+                                        39
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        228,
+                        74,
+                        382,
+                        90
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                230,
+                                76,
+                                381,
+                                89
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        230,
+                                        76,
+                                        381,
+                                        89
+                                    ],
+                                    "score": 1.0,
+                                    "content": "737MAX-FTD-31-23004",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        }
+                    ],
+                    "index": 1,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        99,
+                        241,
+                        112
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                100,
+                                239,
+                                113
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        100,
+                                        239,
+                                        113
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Issue Title : Takeoff Alert Inhibit Option",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        }
+                    ],
+                    "index": 2,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        63,
+                        100,
+                        239,
+                        113
+                    ]
+                },
+                {
+                    "type": "table",
+                    "bbox": [
+                        68,
+                        125,
+                        558,
+                        304
+                    ],
+                    "blocks": [
+                        {
+                            "type": "table_body",
+                            "bbox": [
+                                68,
+                                125,
+                                558,
+                                304
+                            ],
+                            "group_id": 0,
+                            "lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        304
+                                    ],
+                                    "spans": [
+                                        {
+                                            "bbox": [
+                                                68,
+                                                125,
+                                                558,
+                                                304
+                                            ],
+                                            "score": 0.711,
+                                            "type": "table",
+                                            "image_path": "8485828948872f601eab09dbe10a50dd469392a2cea91ec8cf88049546d78d1c.jpg"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "index": 4,
+                            "virtual_lines": [
+                                {
+                                    "bbox": [
+                                        68,
+                                        125,
+                                        558,
+                                        184.66666666666666
+                                    ],
+                                    "spans": [],
+                                    "index": 3
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        184.66666666666666,
+                                        558,
+                                        244.33333333333331
+                                    ],
+                                    "spans": [],
+                                    "index": 4
+                                },
+                                {
+                                    "bbox": [
+                                        68,
+                                        244.33333333333331,
+                                        558,
+                                        304.0
+                                    ],
+                                    "spans": [],
+                                    "index": 5
+                                }
+                            ]
+                        }
+                    ],
+                    "index": 4,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        335,
+                        154,
+                        347
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                54,
+                                335,
+                                154,
+                                347
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        335,
+                                        154,
+                                        347
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Revision Description",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 6,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        351,
+                        241,
+                        363
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                352,
+                                239,
+                                363
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        352,
+                                        239,
+                                        363
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Updated Optional Service Bulletin ECD.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        }
+                    ],
+                    "index": 7,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        64,
+                        352,
+                        239,
+                        363
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        411,
+                        113,
+                        423
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                52,
+                                411,
+                                114,
+                                424
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        52,
+                                        411,
+                                        114,
+                                        424
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Applicability",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 8,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        427,
+                        164,
+                        440
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                428,
+                                163,
+                                440
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        428,
+                                        163,
+                                        440
+                                    ],
+                                    "score": 1.0,
+                                    "content": "All 737MAX Airplanes.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        }
+                    ],
+                    "index": 9,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        64,
+                        428,
+                        163,
+                        440
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        488,
+                        109,
+                        499
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                53,
+                                488,
+                                111,
+                                500
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        488,
+                                        111,
+                                        500
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Description",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 10,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        503,
+                        482,
+                        528
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                504,
+                                480,
+                                518
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        504,
+                                        480,
+                                        518
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing has determined that there is an issue with Option Selection Software (OSS) parameter",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                516,
+                                205,
+                                530
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        516,
+                                        205,
+                                        530
+                                    ],
+                                    "score": 1.0,
+                                    "content": " OSS_TO_ALERT_INH_800FT.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12
+                        }
+                    ],
+                    "index": 11.5,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        62,
+                        504,
+                        480,
+                        530
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        573,
+                        554,
+                        590
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                55,
+                                577,
+                                114,
+                                590
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        55,
+                                        577,
+                                        114,
+                                        590
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Background",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13
+                        }
+                    ],
+                    "index": 13,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        592,
+                        557,
+                        653
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                592,
+                                553,
+                                607
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        592,
+                                        553,
+                                        607
+                                    ],
+                                    "score": 1.0,
+                                    "content": "The Takeoff Alert Inhibit is designed to inhibit the blinking for Engine Alert Messages as described in the Flight",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                604,
+                                527,
+                                619
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        604,
+                                        527,
+                                        619
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Crew Operations Manual (FCOM) Chapter 7 (Engines, APU), Section 10 (Controls and Indicators: Crew",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                617,
+                                556,
+                                630
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        617,
+                                        556,
+                                        630
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Alerts). The Inhibit feature is designed to minimize pilot distractions from 80 knots (kts) up to 400 feet (ft) Radio",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                629,
+                                542,
+                                642
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        629,
+                                        542,
+                                        642
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Altitude (RA) by disabling the OSS parameter above and inhibiting blinking up to 400 ft RA. However, it was",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                642,
+                                482,
+                                653
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        642,
+                                        482,
+                                        653
+                                    ],
+                                    "score": 1.0,
+                                    "content": "determined that the parameter was inverted such that the Inhibit is enabled through 800 ft RA.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 16,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        62,
+                        592,
+                        556,
+                        653
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        63,
+                        705,
+                        88,
+                        716
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                62,
+                                703,
+                                90,
+                                717
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        62,
+                                        703,
+                                        90,
+                                        717
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Note:",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        }
+                    ],
+                    "index": 19,
+                    "page_num": "page_0",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                }
+            ]
+        },
+        {
+            "preproc_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        19,
+                        450,
+                        41
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                21,
+                                450,
+                                40
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        21,
+                                        450,
+                                        40
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        82,
+                        546,
+                        107
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                82,
+                                546,
+                                97
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        82,
+                                        546,
+                                        97
+                                    ],
+                                    "score": 1.0,
+                                    "content": " - The Engine Alert Messages will still annunciate and parent aircraft requirements are still met; requirements",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                95,
+                                362,
+                                109
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        95,
+                                        362,
+                                        109
+                                    ],
+                                    "score": 1.0,
+                                    "content": " do not specify either blinking or inhibiting behavior of crew alerting.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        }
+                    ],
+                    "index": 1.5
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        138,
+                        275,
+                        151
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                138,
+                                273,
+                                152
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        138,
+                                        273,
+                                        152
+                                    ],
+                                    "score": 1.0,
+                                    "content": "- This issue was determined not a safety issue.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 3
+                        }
+                    ],
+                    "index": 3
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        196,
+                        551,
+                        213
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                53,
+                                198,
+                                86,
+                                212
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        198,
+                                        86,
+                                        212
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Status",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 4
+                        }
+                    ],
+                    "index": 4
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        60,
+                        214,
+                        548,
+                        239
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                216,
+                                548,
+                                230
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        216,
+                                        548,
+                                        230
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing will publish a Flight Crew Operations Manual Bulletin (OMB) to reflect the current differences between",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 5
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                228,
+                                190,
+                                242
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        228,
+                                        190,
+                                        242
+                                    ],
+                                    "score": 1.0,
+                                    "content": "design and actual behavior.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 5.5
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        275,
+                        530,
+                        299
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                275,
+                                528,
+                                290
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        275,
+                                        528,
+                                        290
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Applicable FCOM Volume 2 (V2) systems descriptions are also being amended to reflect these changes",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                288,
+                                216,
+                                301
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        288,
+                                        216,
+                                        301
+                                    ],
+                                    "score": 1.0,
+                                    "content": " targeting a November 23 release.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 7.5
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        334,
+                        552,
+                        359
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                334,
+                                554,
+                                350
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        334,
+                                        554,
+                                        350
+                                    ],
+                                    "score": 1.0,
+                                    "content": " The final fix will be available as part of the next MAX Display System (MDS) BlockPoint (BP) release, MDS BP",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                349,
+                                75,
+                                360
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        349,
+                                        75,
+                                        360
+                                    ],
+                                    "score": 1.0,
+                                    "content": " 2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 9.5
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        394,
+                        554,
+                        419
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                396,
+                                554,
+                                408
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        396,
+                                        554,
+                                        408
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2 and a list Fleet Team",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                407,
+                                384,
+                                421
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        407,
+                                        384,
+                                        421
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Digest (FTD) articles that are also addressed by the MDS BP 2 release.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12
+                        }
+                    ],
+                    "index": 11.5
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        464,
+                        556,
+                        481
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                52,
+                                467,
+                                123,
+                                481
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        52,
+                                        467,
+                                        123,
+                                        481
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Interim Action",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13
+                        }
+                    ],
+                    "index": 13
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        483,
+                        290,
+                        496
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                485,
+                                289,
+                                496
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        485,
+                                        289,
+                                        496
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing has identified two interim courses of action:",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14
+                        }
+                    ],
+                    "index": 14
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        515,
+                        421,
+                        528
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                516,
+                                419,
+                                529
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        516,
+                                        419,
+                                        529
+                                    ],
+                                    "score": 1.0,
+                                    "content": "(1) Operators may continue to fly with the OSS parameter inversion of 800 ft RA.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15
+                        }
+                    ],
+                    "index": 15
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        563,
+                        558,
+                        600
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                564,
+                                540,
+                                578
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        564,
+                                        540,
+                                        578
+                                    ],
+                                    "score": 1.0,
+                                    "content": " If this course of action is chosen, operators should consider proactively communicating with flight crew that",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                576,
+                                558,
+                                590
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        576,
+                                        558,
+                                        590
+                                    ],
+                                    "score": 1.0,
+                                    "content": " blinking of engine alerts will be inhibited at a different range (up to 800 ft RA instead of up to 400 ft RA) than as",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                590,
+                                216,
+                                601
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        590,
+                                        216,
+                                        601
+                                    ],
+                                    "score": 1.0,
+                                    "content": "described in FCOM Chapter 7.10.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 17
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        634,
+                        554,
+                        684
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                637,
+                                537,
+                                650
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        637,
+                                        537,
+                                        650
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Be aware that the OSS parameter OSS_TO_ALERT_INH_800FT is designed for affected aircraft to inhibit",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                648,
+                                554,
+                                662
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        648,
+                                        554,
+                                        662
+                                    ],
+                                    "score": 1.0,
+                                    "content": " during takeoff from 80 Knots Indicated Airspeed (KIAS) to 400 ft RA as described in the FCOM, or 30 seconds",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 20
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                661,
+                                529,
+                                673
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        661,
+                                        529,
+                                        673
+                                    ],
+                                    "score": 1.0,
+                                    "content": "after reaching 80 kts, whichever occurs first; however, the inhibit is currently active up to 800 ft RA, or 30",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 21
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                673,
+                                200,
+                                685
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        673,
+                                        200,
+                                        685
+                                    ],
+                                    "score": 1.0,
+                                    "content": "seconds after reaching 80 kts.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 22
+                        }
+                    ],
+                    "index": 20.5
+                }
+            ],
+            "layout_bboxes": [],
+            "page_idx": 1,
+            "page_size": [
+                612.0,
+                792.0
+            ],
+            "_layout_tree": [],
+            "images": [],
+            "tables": [],
+            "interline_equations": [],
+            "discarded_blocks": [
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        71,
+                        15,
+                        159,
+                        36
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                96,
+                                19,
+                                158,
+                                29
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        96,
+                                        19,
+                                        158,
+                                        29
+                                    ],
+                                    "score": 0.9403620362281799,
+                                    "content": "BOEING",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        56,
+                        718,
+                        547,
+                        748
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                54,
+                                718,
+                                546,
+                                732
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        718,
+                                        546,
+                                        732
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Disclaimer: This document contains BOEING PROPRIETARY information, Encrypted emails required for forwarding via Email. Document",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                55,
+                                730,
+                                544,
+                                741
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        55,
+                                        730,
+                                        544,
+                                        741
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Generated on 09/20/2023 by Fleet Team Digest, this document is only for reference purpose, visit the application for all latest and updated",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                56,
+                                740,
+                                158,
+                                749
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        56,
+                                        740,
+                                        158,
+                                        749
+                                    ],
+                                    "score": 1.0,
+                                    "content": "evisions of this digest article.",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        302,
+                        749,
+                        309,
+                        758
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                302,
+                                749,
+                                309,
+                                759
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        302,
+                                        749,
+                                        309,
+                                        759
+                                    ],
+                                    "score": 1.0,
+                                    "content": "2",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "need_drop": false,
+            "drop_reason": [],
+            "para_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        19,
+                        450,
+                        41
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                21,
+                                450,
+                                40
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        21,
+                                        450,
+                                        40
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        82,
+                        546,
+                        107
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                82,
+                                546,
+                                97
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        82,
+                                        546,
+                                        97
+                                    ],
+                                    "score": 1.0,
+                                    "content": " - The Engine Alert Messages will still annunciate and parent aircraft requirements are still met; requirements",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                95,
+                                362,
+                                109
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        95,
+                                        362,
+                                        109
+                                    ],
+                                    "score": 1.0,
+                                    "content": " do not specify either blinking or inhibiting behavior of crew alerting.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        }
+                    ],
+                    "index": 1.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        82,
+                        546,
+                        109
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        138,
+                        275,
+                        151
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                138,
+                                273,
+                                152
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        138,
+                                        273,
+                                        152
+                                    ],
+                                    "score": 1.0,
+                                    "content": "- This issue was determined not a safety issue.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 3
+                        }
+                    ],
+                    "index": 3,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        66,
+                        138,
+                        273,
+                        152
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        196,
+                        551,
+                        213
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                53,
+                                198,
+                                86,
+                                212
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        198,
+                                        86,
+                                        212
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Status",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 4
+                        }
+                    ],
+                    "index": 4,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        60,
+                        214,
+                        548,
+                        239
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                216,
+                                548,
+                                230
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        216,
+                                        548,
+                                        230
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing will publish a Flight Crew Operations Manual Bulletin (OMB) to reflect the current differences between",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 5
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                228,
+                                190,
+                                242
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        228,
+                                        190,
+                                        242
+                                    ],
+                                    "score": 1.0,
+                                    "content": "design and actual behavior.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 5.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        63,
+                        216,
+                        548,
+                        242
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        275,
+                        530,
+                        299
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                275,
+                                528,
+                                290
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        275,
+                                        528,
+                                        290
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Applicable FCOM Volume 2 (V2) systems descriptions are also being amended to reflect these changes",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                288,
+                                216,
+                                301
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        288,
+                                        216,
+                                        301
+                                    ],
+                                    "score": 1.0,
+                                    "content": " targeting a November 23 release.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 7.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        275,
+                        528,
+                        301
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        334,
+                        552,
+                        359
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                334,
+                                554,
+                                350
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        334,
+                                        554,
+                                        350
+                                    ],
+                                    "score": 1.0,
+                                    "content": " The final fix will be available as part of the next MAX Display System (MDS) BlockPoint (BP) release, MDS BP",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                349,
+                                75,
+                                360
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        349,
+                                        75,
+                                        360
+                                    ],
+                                    "score": 1.0,
+                                    "content": " 2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 9.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        64,
+                        334,
+                        554,
+                        360
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        394,
+                        554,
+                        419
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                396,
+                                554,
+                                408
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        396,
+                                        554,
+                                        408
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2 and a list Fleet Team",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                407,
+                                384,
+                                421
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        407,
+                                        384,
+                                        421
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Digest (FTD) articles that are also addressed by the MDS BP 2 release.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12
+                        }
+                    ],
+                    "index": 11.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        66,
+                        396,
+                        554,
+                        421
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        54,
+                        464,
+                        556,
+                        481
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                52,
+                                467,
+                                123,
+                                481
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        52,
+                                        467,
+                                        123,
+                                        481
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Interim Action",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13
+                        }
+                    ],
+                    "index": 13,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        62,
+                        483,
+                        290,
+                        496
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                485,
+                                289,
+                                496
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        485,
+                                        289,
+                                        496
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Boeing has identified two interim courses of action:",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14
+                        }
+                    ],
+                    "index": 14,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        64,
+                        485,
+                        289,
+                        496
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        515,
+                        421,
+                        528
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                516,
+                                419,
+                                529
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        516,
+                                        419,
+                                        529
+                                    ],
+                                    "score": 1.0,
+                                    "content": "(1) Operators may continue to fly with the OSS parameter inversion of 800 ft RA.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15
+                        }
+                    ],
+                    "index": 15,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        63,
+                        516,
+                        419,
+                        529
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        563,
+                        558,
+                        600
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                64,
+                                564,
+                                540,
+                                578
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        64,
+                                        564,
+                                        540,
+                                        578
+                                    ],
+                                    "score": 1.0,
+                                    "content": " If this course of action is chosen, operators should consider proactively communicating with flight crew that",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                576,
+                                558,
+                                590
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        576,
+                                        558,
+                                        590
+                                    ],
+                                    "score": 1.0,
+                                    "content": " blinking of engine alerts will be inhibited at a different range (up to 800 ft RA instead of up to 400 ft RA) than as",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                590,
+                                216,
+                                601
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        590,
+                                        216,
+                                        601
+                                    ],
+                                    "score": 1.0,
+                                    "content": "described in FCOM Chapter 7.10.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 17,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        64,
+                        564,
+                        558,
+                        601
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        634,
+                        554,
+                        684
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                637,
+                                537,
+                                650
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        637,
+                                        537,
+                                        650
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Be aware that the OSS parameter OSS_TO_ALERT_INH_800FT is designed for affected aircraft to inhibit",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                648,
+                                554,
+                                662
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        648,
+                                        554,
+                                        662
+                                    ],
+                                    "score": 1.0,
+                                    "content": " during takeoff from 80 Knots Indicated Airspeed (KIAS) to 400 ft RA as described in the FCOM, or 30 seconds",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 20
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                661,
+                                529,
+                                673
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        661,
+                                        529,
+                                        673
+                                    ],
+                                    "score": 1.0,
+                                    "content": "after reaching 80 kts, whichever occurs first; however, the inhibit is currently active up to 800 ft RA, or 30",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 21
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                673,
+                                200,
+                                685
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        673,
+                                        200,
+                                        685
+                                    ],
+                                    "score": 1.0,
+                                    "content": "seconds after reaching 80 kts.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 22
+                        }
+                    ],
+                    "index": 20.5,
+                    "page_num": "page_1",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        637,
+                        554,
+                        685
+                    ]
+                }
+            ]
+        },
+        {
+            "preproc_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        18,
+                        450,
+                        42
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                21,
+                                450,
+                                40
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        21,
+                                        450,
+                                        40
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        106,
+                        523,
+                        142
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                108,
+                                522,
+                                121
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        108,
+                                        522,
+                                        121
+                                    ],
+                                    "score": 1.0,
+                                    "content": "(2) An optional Boeing Service Bulletin (SB 737-31-2108) will be available for in-service airplanes flying",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                119,
+                                521,
+                                133
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        119,
+                                        521,
+                                        133
+                                    ],
+                                    "score": 1.0,
+                                    "content": " with MDS OPS (Operational Program Software) SW BP 1.5.1 to revert to the intended 400 ft RA inhibit",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                132,
+                                262,
+                                144
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        132,
+                                        262,
+                                        144
+                                    ],
+                                    "score": 1.0,
+                                    "content": "configuration until the release of MDS BP 2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 3
+                        }
+                    ],
+                    "index": 2
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        178,
+                        510,
+                        203
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                179,
+                                507,
+                                193
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        179,
+                                        507,
+                                        193
+                                    ],
+                                    "score": 1.0,
+                                    "content": " When available, please submit a Service Request via My Boeing Fleet or contact your Field Service",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 4
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                192,
+                                398,
+                                204
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        192,
+                                        398,
+                                        204
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Representative and reference PRR 3M9900-100R and/or SB 737-31-2108.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 5
+                        }
+                    ],
+                    "index": 4.5
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        247,
+                        553,
+                        265
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                56,
+                                251,
+                                113,
+                                264
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        56,
+                                        251,
+                                        113,
+                                        264
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Final Action",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 6
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        61,
+                        267,
+                        536,
+                        291
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                268,
+                                533,
+                                281
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        268,
+                                        533,
+                                        281
+                                    ],
+                                    "score": 1.0,
+                                    "content": "When available, incorporate Max Displays System (MDS) BlockPoint (BP) 2 Release, MDS BP 2. This will",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                281,
+                                295,
+                                291
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        281,
+                                        295,
+                                        291
+                                    ],
+                                    "score": 1.0,
+                                    "content": "revert the behavior to the intended 400 ft RA inhibit.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 7.5
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        326,
+                        462,
+                        340
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                327,
+                                461,
+                                342
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        327,
+                                        461,
+                                        342
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        }
+                    ],
+                    "index": 9
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        388,
+                        106,
+                        398
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                54,
+                                387,
+                                108,
+                                401
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        387,
+                                        108,
+                                        401
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Milestones",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 10
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        57,
+                        403,
+                        453,
+                        416
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                404,
+                                452,
+                                419
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        404,
+                                        452,
+                                        419
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Note: Target dates are based upon currently available status and are subject to change.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        }
+                    ],
+                    "index": 11
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        450,
+                        420,
+                        585
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                452,
+                                228,
+                                465
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        452,
+                                        228,
+                                        465
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Root Cause Established: Completed",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                477,
+                                199,
+                                489
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        477,
+                                        199,
+                                        489
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Solution Selected: Completed",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                500,
+                                243,
+                                513
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        500,
+                                        243,
+                                        513
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Change Committed: PRR3M9900-100R",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                525,
+                                309,
+                                536
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        525,
+                                        309,
+                                        536
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Production Incorporation: See 737MAX-FTD-31-23002",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                549,
+                                354,
+                                561
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        549,
+                                        354,
+                                        561
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Optional Service Bulletin 737-31-2108 Available: ECD DEC-2023",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                573,
+                                418,
+                                584
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        573,
+                                        418,
+                                        584
+                                    ],
+                                    "score": 1.0,
+                                    "content": "MDS BP2 Service Bulletin 737-31-1929 Available: See 737MAX-FTD-31-23002",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17
+                        }
+                    ],
+                    "index": 14.5
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        628,
+                        556,
+                        645
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                55,
+                                631,
+                                148,
+                                646
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        55,
+                                        631,
+                                        148,
+                                        646
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Related Categories",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 18
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        66,
+                        649,
+                        539,
+                        690
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                79,
+                                650,
+                                536,
+                                666
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        79,
+                                        650,
+                                        536,
+                                        666
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Flight Deck Effects and Maintenance Messages - Issue that occurs frequently and causes a flight deck",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        },
+                        {
+                            "bbox": [
+                                80,
+                                663,
+                                223,
+                                677
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        80,
+                                        663,
+                                        223,
+                                        677
+                                    ],
+                                    "score": 1.0,
+                                    "content": "effect or maintenance message",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 20
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                678,
+                                244,
+                                692
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        678,
+                                        244,
+                                        692
+                                    ],
+                                    "score": 1.0,
+                                    "content": "• Flight Operations - Flight Operations",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 21
+                        }
+                    ],
+                    "index": 20
+                }
+            ],
+            "layout_bboxes": [],
+            "page_idx": 2,
+            "page_size": [
+                612.0,
+                792.0
+            ],
+            "_layout_tree": [],
+            "images": [],
+            "tables": [],
+            "interline_equations": [],
+            "discarded_blocks": [
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        71,
+                        15,
+                        159,
+                        36
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                96,
+                                19,
+                                158,
+                                29
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        96,
+                                        19,
+                                        158,
+                                        29
+                                    ],
+                                    "score": 0.9403620362281799,
+                                    "content": "BOEING",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        54,
+                        718,
+                        547,
+                        748
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                52,
+                                718,
+                                545,
+                                732
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        52,
+                                        718,
+                                        545,
+                                        732
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Disclaimer: This document contains BOEING PROPRIETARY information, Encrypted emails required for forwarding via Email. Document",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                53,
+                                729,
+                                544,
+                                740
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        53,
+                                        729,
+                                        544,
+                                        740
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Generated on 09/20/2023 by Fleet Team Digest, this document is only for reference purpose, visit the application for all latest and updated",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        {
+                            "bbox": [
+                                54,
+                                740,
+                                158,
+                                749
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        740,
+                                        158,
+                                        749
+                                    ],
+                                    "score": 1.0,
+                                    "content": "revisions of this digest article.",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "discarded",
+                    "bbox": [
+                        302,
+                        749,
+                        309,
+                        758
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                302,
+                                749,
+                                309,
+                                759
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        302,
+                                        749,
+                                        309,
+                                        759
+                                    ],
+                                    "score": 1.0,
+                                    "content": "3",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "need_drop": false,
+            "drop_reason": [],
+            "para_blocks": [
+                {
+                    "type": "title",
+                    "bbox": [
+                        221,
+                        18,
+                        450,
+                        42
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                224,
+                                21,
+                                450,
+                                40
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        224,
+                                        21,
+                                        450,
+                                        40
+                                    ],
+                                    "score": 1.0,
+                                    "content": "FLEET TEAM DIGEST",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 0
+                        }
+                    ],
+                    "index": 0,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        65,
+                        106,
+                        523,
+                        142
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                108,
+                                522,
+                                121
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        108,
+                                        522,
+                                        121
+                                    ],
+                                    "score": 1.0,
+                                    "content": "(2) An optional Boeing Service Bulletin (SB 737-31-2108) will be available for in-service airplanes flying",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 1
+                        },
+                        {
+                            "bbox": [
+                                65,
+                                119,
+                                521,
+                                133
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        119,
+                                        521,
+                                        133
+                                    ],
+                                    "score": 1.0,
+                                    "content": " with MDS OPS (Operational Program Software) SW BP 1.5.1 to revert to the intended 400 ft RA inhibit",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 2
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                132,
+                                262,
+                                144
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        132,
+                                        262,
+                                        144
+                                    ],
+                                    "score": 1.0,
+                                    "content": "configuration until the release of MDS BP 2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 3
+                        }
+                    ],
+                    "index": 2,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        108,
+                        522,
+                        144
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        64,
+                        178,
+                        510,
+                        203
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                179,
+                                507,
+                                193
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        179,
+                                        507,
+                                        193
+                                    ],
+                                    "score": 1.0,
+                                    "content": " When available, please submit a Service Request via My Boeing Fleet or contact your Field Service",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 4
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                192,
+                                398,
+                                204
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        192,
+                                        398,
+                                        204
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Representative and reference PRR 3M9900-100R and/or SB 737-31-2108.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 5
+                        }
+                    ],
+                    "index": 4.5,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        179,
+                        507,
+                        204
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        247,
+                        553,
+                        265
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                56,
+                                251,
+                                113,
+                                264
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        56,
+                                        251,
+                                        113,
+                                        264
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Final Action",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 6
+                        }
+                    ],
+                    "index": 6,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        61,
+                        267,
+                        536,
+                        291
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                268,
+                                533,
+                                281
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        268,
+                                        533,
+                                        281
+                                    ],
+                                    "score": 1.0,
+                                    "content": "When available, incorporate Max Displays System (MDS) BlockPoint (BP) 2 Release, MDS BP 2. This will",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 7
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                281,
+                                295,
+                                291
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        281,
+                                        295,
+                                        291
+                                    ],
+                                    "score": 1.0,
+                                    "content": "revert the behavior to the intended 400 ft RA inhibit.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 8
+                        }
+                    ],
+                    "index": 7.5,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        63,
+                        268,
+                        533,
+                        291
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        63,
+                        326,
+                        462,
+                        340
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                65,
+                                327,
+                                461,
+                                342
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        65,
+                                        327,
+                                        461,
+                                        342
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 9
+                        }
+                    ],
+                    "index": 9,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        65,
+                        327,
+                        461,
+                        342
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        388,
+                        106,
+                        398
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                54,
+                                387,
+                                108,
+                                401
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        54,
+                                        387,
+                                        108,
+                                        401
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Milestones",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 10
+                        }
+                    ],
+                    "index": 10,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        57,
+                        403,
+                        453,
+                        416
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                63,
+                                404,
+                                452,
+                                419
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        63,
+                                        404,
+                                        452,
+                                        419
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Note: Target dates are based upon currently available status and are subject to change.",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 11
+                        }
+                    ],
+                    "index": 11,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        63,
+                        404,
+                        452,
+                        419
+                    ]
+                },
+                {
+                    "type": "list",
+                    "bbox": [
+                        63,
+                        450,
+                        420,
+                        585
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                66,
+                                452,
+                                228,
+                                465
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        452,
+                                        228,
+                                        465
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Root Cause Established: Completed",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 12,
+                            "is_list_start_line": true
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                477,
+                                199,
+                                489
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        477,
+                                        199,
+                                        489
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Solution Selected: Completed",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 13,
+                            "is_list_start_line": true
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                500,
+                                243,
+                                513
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        500,
+                                        243,
+                                        513
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Change Committed: PRR3M9900-100R",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 14,
+                            "is_list_start_line": true
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                525,
+                                309,
+                                536
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        525,
+                                        309,
+                                        536
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Production Incorporation: See 737MAX-FTD-31-23002",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 15,
+                            "is_list_start_line": true
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                549,
+                                354,
+                                561
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        549,
+                                        354,
+                                        561
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Optional Service Bulletin 737-31-2108 Available: ECD DEC-2023",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 16,
+                            "is_list_start_line": true
+                        },
+                        {
+                            "bbox": [
+                                66,
+                                573,
+                                418,
+                                584
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        66,
+                                        573,
+                                        418,
+                                        584
+                                    ],
+                                    "score": 1.0,
+                                    "content": "MDS BP2 Service Bulletin 737-31-1929 Available: See 737MAX-FTD-31-23002",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 17,
+                            "is_list_start_line": true
+                        }
+                    ],
+                    "index": 14.5,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        66,
+                        452,
+                        418,
+                        584
+                    ]
+                },
+                {
+                    "type": "title",
+                    "bbox": [
+                        55,
+                        628,
+                        556,
+                        645
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                55,
+                                631,
+                                148,
+                                646
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        55,
+                                        631,
+                                        148,
+                                        646
+                                    ],
+                                    "score": 1.0,
+                                    "content": " Related Categories",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 18
+                        }
+                    ],
+                    "index": 18,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ]
+                },
+                {
+                    "type": "text",
+                    "bbox": [
+                        66,
+                        649,
+                        539,
+                        690
+                    ],
+                    "lines": [
+                        {
+                            "bbox": [
+                                79,
+                                650,
+                                536,
+                                666
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        79,
+                                        650,
+                                        536,
+                                        666
+                                    ],
+                                    "score": 1.0,
+                                    "content": "Flight Deck Effects and Maintenance Messages - Issue that occurs frequently and causes a flight deck",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 19
+                        },
+                        {
+                            "bbox": [
+                                80,
+                                663,
+                                223,
+                                677
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        80,
+                                        663,
+                                        223,
+                                        677
+                                    ],
+                                    "score": 1.0,
+                                    "content": "effect or maintenance message",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 20
+                        },
+                        {
+                            "bbox": [
+                                69,
+                                678,
+                                244,
+                                692
+                            ],
+                            "spans": [
+                                {
+                                    "bbox": [
+                                        69,
+                                        678,
+                                        244,
+                                        692
+                                    ],
+                                    "score": 1.0,
+                                    "content": "• Flight Operations - Flight Operations",
+                                    "type": "text"
+                                }
+                            ],
+                            "index": 21
+                        }
+                    ],
+                    "index": 20,
+                    "page_num": "page_2",
+                    "page_size": [
+                        612.0,
+                        792.0
+                    ],
+                    "bbox_fs": [
+                        69,
+                        650,
+                        536,
+                        692
+                    ]
+                }
+            ]
+        }
+    ],
+    "_parse_type": "txt",
+    "_version_name": "1.1.0"
+}

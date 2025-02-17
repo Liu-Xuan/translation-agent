@@ -1,10 +1,22 @@
 """
-测试波音737 MAX技术文档的翻译
-重点关注专业术语和格式保留
+波音737 MAX技术文档翻译工具
+包含完整的翻译、反思和改进功能
+
+依赖安装：
+pip install python-dotenv openai pytest
+
+环境变量设置：
+DASHSCOPE_API_KEY=your_api_key
+
+项目结构要求：
+project_root/
+├── data/
+│   └── glossary.json         # 术语表文件
+├── docs/                    # 待翻译的文档
+└── output/                 # 输出目录
 """
+
 import os
-import pytest
-from dotenv import load_dotenv
 import sys
 from pathlib import Path
 import logging
@@ -15,6 +27,7 @@ import asyncio
 from openai import OpenAI
 from openai import AsyncOpenAI
 import re
+from dotenv import load_dotenv
 
 # 加载环境变量
 load_dotenv()
@@ -27,59 +40,28 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(console_handler)
 
-# 添加项目根目录到Python路径
-project_root = str(Path(__file__).parent.parent)
-if project_root not in sys.path:
-    sys.path.append(project_root)
-
-def load_and_filter_terms(source_text: str) -> list:
-    """
-    加载术语表并根据源文本筛选相关术语
-    Args:
-        source_text: 源文本
-    Returns:
-        list: 筛选后的术语列表
-    """
-    # 从术语表中获取术语
-    with open(Path(project_root) / "data/glossary.json", 'r', encoding='utf-8') as f:
-        glossary = json.load(f)
-    terms = glossary['terms']
-    
-    # 统计术语使用频率
-    term_counts = {}
-    for term in terms:
-        source_text_lower = source_text.lower()
-        term_text = term['source']['text'].lower()
-        count = source_text_lower.count(term_text)
-        if count > 0:  # 只记录在源文本中出现的术语
-            term_counts[term['source']['text']] = count
-    
-    # 过滤并返回使用的术语
-    used_terms = [term for term in terms if term['source']['text'] in term_counts]
-    return used_terms
-
 class DeepSeekClient:
     """DeepSeek模型客户端，支持同步和异步操作"""
-    def __init__(self):
-        api_key = os.getenv("DASHSCOPE_API_KEY")
-        if not api_key:
-            raise ValueError("请在.env文件中设置DASHSCOPE_API_KEY环境变量")
+    def __init__(self, api_key: str = None, base_url: str = None):
+        self.api_key = api_key or os.getenv("DASHSCOPE_API_KEY")
+        if not self.api_key:
+            raise ValueError("请提供API密钥或在环境变量中设置DASHSCOPE_API_KEY")
             
-        base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        self.base_url = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
         
         # 同步客户端
         self.sync_client = OpenAI(
-            api_key=api_key,
-            base_url=base_url,
+            api_key=self.api_key,
+            base_url=self.base_url,
             max_retries=5,
-            timeout=300.0  # 增加到5分钟
+            timeout=300.0
         )
         
         # 异步客户端
         self.async_client = AsyncOpenAI(
-            api_key=api_key,
-            base_url=base_url,
-            timeout=300.0  # 增加到5分钟
+            api_key=self.api_key,
+            base_url=self.base_url,
+            timeout=300.0
         )
         
         # 模型配置
@@ -203,6 +185,33 @@ class TranslationRecorder:
                     short_form = abbr[abbr.find('(')+1:abbr.find(')')]
                     f.write(f"  * {short_form}\n")
 
+def load_and_filter_terms(source_text: str, glossary_path: Path) -> list:
+    """
+    加载术语表并根据源文本筛选相关术语
+    Args:
+        source_text: 源文本
+        glossary_path: 术语表文件路径
+    Returns:
+        list: 筛选后的术语列表
+    """
+    # 从术语表中获取术语
+    with open(glossary_path, 'r', encoding='utf-8') as f:
+        glossary = json.load(f)
+    terms = glossary['terms']
+    
+    # 统计术语使用频率
+    term_counts = {}
+    for term in terms:
+        source_text_lower = source_text.lower()
+        term_text = term['source']['text'].lower()
+        count = source_text_lower.count(term_text)
+        if count > 0:  # 只记录在源文本中出现的术语
+            term_counts[term['source']['text']] = count
+    
+    # 过滤并返回使用的术语
+    used_terms = [term for term in terms if term['source']['text'] in term_counts]
+    return used_terms
+
 async def translate_document(client: DeepSeekClient, text: str, model: str, used_terms: list = None) -> str:
     """
     翻译文档
@@ -309,31 +318,44 @@ async def improve_translation(client: DeepSeekClient, source: str, translation: 
 """
     return await client.translate_text_stream(prompt, "deepseek-v3")
 
-@pytest.mark.asyncio
-async def test_boeing_doc_translation():
-    """测试波音文档翻译流程"""
+async def translate_boeing_doc(
+    source_file: Path,
+    output_dir: Path,
+    glossary_path: Path,
+    api_key: str = None,
+    base_url: str = None
+) -> str:
+    """
+    翻译波音文档的主函数
+    Args:
+        source_file: 源文档路径
+        output_dir: 输出目录
+        glossary_path: 术语表路径
+        api_key: API密钥（可选）
+        base_url: API基础URL（可选）
+    Returns:
+        str: 翻译后的文本
+    """
     logger.info("="*50)
-    logger.info("开始波音文档翻译测试")
+    logger.info("开始波音文档翻译")
     logger.info("="*50)
     
     # 初始化客户端和记录器
-    client = DeepSeekClient()
-    recorder = TranslationRecorder(Path(project_root) / "test_reports")
-    
-    # 读取源文档
-    doc_path = Path(project_root) / "testcases/737MAX-FTD-31-23004_Doc_09202023/auto/737MAX-FTD-31-23004_Doc_09202023/auto/737MAX-FTD-31-23004_Doc_09202023.md"
+    client = DeepSeekClient(api_key, base_url)
+    recorder = TranslationRecorder(output_dir)
     
     try:
-        with open(doc_path, 'r', encoding='utf-8') as f:
+        # 读取源文档
+        with open(source_file, 'r', encoding='utf-8') as f:
             source_text = f.read()
         
         # 记录源文档信息
         recorder.add_section("源文档信息")
-        recorder.add_content(f"- 文件路径: {doc_path}")
+        recorder.add_content(f"- 文件路径: {source_file}")
         recorder.add_content(f"- 文本长度: {len(source_text)} 字符")
         
         # 加载和筛选术语
-        used_terms = load_and_filter_terms(source_text)
+        used_terms = load_and_filter_terms(source_text, glossary_path)
         
         # 术语分析
         recorder.add_term_analysis(source_text, used_terms)
@@ -371,7 +393,7 @@ async def test_boeing_doc_translation():
         recorder.add_validation_result(validation_results)
         
         # 保存结果
-        output_path = doc_path.parent / "737MAX-FTD-46-19002_Doc_01092023_CN.md"
+        output_path = output_dir / f"{source_file.stem}_CN{source_file.suffix}"
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(final_translation)
             
@@ -385,5 +407,22 @@ async def test_boeing_doc_translation():
         recorder.add_content(f"- 错误详情: {str(e)}")
         raise
 
+def main():
+    """主函数"""
+    # 设置项目路径
+    project_root = Path(__file__).parent.parent.parent
+    
+    # 设置输入输出路径
+    source_file = project_root / "docs/737MAX-FTD-46-19002_Doc_01092023.md"
+    output_dir = project_root / "output"
+    glossary_path = project_root / "data/glossary.json"
+    
+    # 运行翻译
+    asyncio.run(translate_boeing_doc(
+        source_file=source_file,
+        output_dir=output_dir,
+        glossary_path=glossary_path
+    ))
+
 if __name__ == "__main__":
-    pytest.main(["-v", "--log-cli-level=DEBUG", __file__]) 
+    main() 

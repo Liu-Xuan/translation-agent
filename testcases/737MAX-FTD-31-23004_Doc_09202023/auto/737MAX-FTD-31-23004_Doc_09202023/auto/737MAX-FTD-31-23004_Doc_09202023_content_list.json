@@ -1,0 +1,203 @@
+[
+    {
+        "type": "text",
+        "text": "FLEET TEAM DIGEST ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "737MAX-FTD-31-23004 ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Issue Title : Takeoff Alert Inhibit Option ",
+        "page_idx": 0
+    },
+    {
+        "type": "table",
+        "img_path": "images/8485828948872f601eab09dbe10a50dd469392a2cea91ec8cf88049546d78d1c.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Revision Description ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Updated Optional Service Bulletin ECD. ",
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Applicability ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "All 737MAX Airplanes. ",
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Description ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Boeing has determined that there is an issue with Option Selection Software (OSS) parameter OSS_TO_ALERT_INH_800FT. ",
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Background ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "The Takeoff Alert Inhibit is designed to inhibit the blinking for Engine Alert Messages as described in the Flight Crew Operations Manual (FCOM) Chapter 7 (Engines, APU), Section 10 (Controls and Indicators: Crew Alerts). The Inhibit feature is designed to minimize pilot distractions from 80 knots (kts) up to 400 feet (ft) Radio Altitude (RA) by disabling the OSS parameter above and inhibiting blinking up to 400 ft RA. However, it was determined that the parameter was inverted such that the Inhibit is enabled through 800 ft RA. ",
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Note: ",
+        "text_level": 1,
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "FLEET TEAM DIGEST ",
+        "text_level": 1,
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "- The Engine Alert Messages will still annunciate and parent aircraft requirements are still met; requirements do not specify either blinking or inhibiting behavior of crew alerting. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "- This issue was determined not a safety issue. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Status ",
+        "text_level": 1,
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Boeing will publish a Flight Crew Operations Manual Bulletin (OMB) to reflect the current differences between design and actual behavior. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Applicable FCOM Volume 2 (V2) systems descriptions are also being amended to reflect these changes targeting a November 23 release. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The final fix will be available as part of the next MAX Display System (MDS) BlockPoint (BP) release, MDS BP 2. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2 and a list Fleet Team Digest (FTD) articles that are also addressed by the MDS BP 2 release. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Interim Action ",
+        "text_level": 1,
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Boeing has identified two interim courses of action: ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "(1) Operators may continue to fly with the OSS parameter inversion of 800 ft RA. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "If this course of action is chosen, operators should consider proactively communicating with flight crew that blinking of engine alerts will be inhibited at a different range (up to 800 ft RA instead of up to 400 ft RA) than as described in FCOM Chapter 7.10. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Be aware that the OSS parameter OSS_TO_ALERT_INH_800FT is designed for affected aircraft to inhibit during takeoff from 80 Knots Indicated Airspeed (KIAS) to 400 ft RA as described in the FCOM, or 30 seconds after reaching 80 kts, whichever occurs first; however, the inhibit is currently active up to 800 ft RA, or 30 seconds after reaching 80 kts. ",
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "FLEET TEAM DIGEST ",
+        "text_level": 1,
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "(2) An optional Boeing Service Bulletin (SB 737-31-2108) will be available for in-service airplanes flying with MDS OPS (Operational Program Software) SW BP 1.5.1 to revert to the intended 400 ft RA inhibit configuration until the release of MDS BP 2. ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "When available, please submit a Service Request via My Boeing Fleet or contact your Field Service Representative and reference PRR 3M9900-100R and/or SB 737-31-2108. ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Final Action ",
+        "text_level": 1,
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "When available, incorporate Max Displays System (MDS) BlockPoint (BP) 2 Release, MDS BP 2. This will revert the behavior to the intended 400 ft RA inhibit. ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Please see 737MAX-FTD-31-23002 for current status and release schedule of MDS BP2. ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Milestones ",
+        "text_level": 1,
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Note: Target dates are based upon currently available status and are subject to change. ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Root Cause Established: Completed   \nSolution Selected: Completed   \nChange Committed: PRR3M9900-100R   \nProduction Incorporation: See 737MAX-FTD-31-23002   \nOptional Service Bulletin 737-31-2108 Available: ECD DEC-2023   \nMDS BP2 Service Bulletin 737-31-1929 Available: See 737MAX-FTD-31-23002 ",
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Related Categories ",
+        "text_level": 1,
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Flight Deck Effects and Maintenance Messages - Issue that occurs frequently and causes a flight deck effect or maintenance message • Flight Operations - Flight Operations ",
+        "page_idx": 2
+    }
+]
